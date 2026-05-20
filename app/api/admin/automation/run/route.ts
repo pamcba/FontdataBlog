@@ -1,0 +1,15 @@
+import { NextResponse } from 'next/server'
+import { runAutomationCycle } from '@/lib/automation'
+
+export const maxDuration = 60
+
+export async function POST() {
+  try {
+    const result = await runAutomationCycle(true) // force=true skips interval check
+    const status = result.success ? 200 : result.skipped ? 200 : 500
+    return NextResponse.json(result, { status })
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Erro interno'
+    return NextResponse.json({ error: msg }, { status: 500 })
+  }
+}
