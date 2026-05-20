@@ -3,6 +3,8 @@ import { PortalHeader } from '@/components/layout/PortalHeader'
 import { Footer } from '@/components/layout/Footer'
 import { getSettings } from '@/lib/settings'
 
+export const dynamic = 'force-dynamic'
+
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const { template, company } = await getSettings()
   const blogName = company.blog_name || process.env.NEXT_PUBLIC_BLOG_NAME || 'Blog'

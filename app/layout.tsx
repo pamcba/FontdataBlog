@@ -2,13 +2,19 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { getSettings, darkenHex, lightenHex } from '@/lib/settings'
 
-export const metadata: Metadata = {
-  title: {
-    template: '%s | MMA Sistemas Blog',
-    default: 'MMA Sistemas Blog',
-  },
-  description: 'Tecnologia, gestão e inovação para empresas',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'),
+export const dynamic = 'force-dynamic'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { company } = await getSettings()
+  const blogName = company.blog_name || process.env.NEXT_PUBLIC_BLOG_NAME || 'Blog'
+  return {
+    title: {
+      template: `%s | ${blogName}`,
+      default: blogName,
+    },
+    description: company.blog_description || 'Tecnologia, gestão e inovação para empresas',
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'),
+  }
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
