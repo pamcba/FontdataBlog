@@ -9,6 +9,11 @@ import { getSettings } from '@/lib/settings'
 import { FeaturedSection } from '@/components/blog/FeaturedSection'
 import { PostCardBusiness } from '@/components/blog/PostCardBusiness'
 import { NewsletterSection } from '@/components/blog/NewsletterSection'
+import { CategorySection } from '@/components/blog/CategorySection'
+import { NewsSidebar } from '@/components/blog/NewsSidebar'
+import { db } from '@/drizzle/db'
+import { posts, postCategories, categories } from '@/drizzle/schema'
+import { eq, desc, and, asc } from 'drizzle-orm'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { company } = await getSettings()
@@ -37,6 +42,61 @@ async function getCategories() {
   return res.json()
 }
 
+type NewsPost = {
+  id: number
+  title: string
+  slug: string
+  content: string
+  excerpt: string
+  cover_image: string | null
+  published_at: string | null
+  categories: { id: number; name: string; slug: string }[]
+}
+
+async function getNewsSections(): Promise<
+  { category: { id: number; name: string; slug: string }; posts: NewsPost[] }[]
+> {
+  try {
+    const cats = await db.select().from(categories).orderBy(asc(categories.name))
+    const sections = await Promise.all(
+      cats.map(async (cat) => {
+        const rows = await db
+          .select({ post: posts })
+          .from(posts)
+          .innerJoin(postCategories, eq(postCategories.post_id, posts.id))
+          .where(
+            and(
+              eq(posts.status, 'published'),
+              eq(postCategories.category_id, cat.id)
+            )
+          )
+          .orderBy(desc(posts.published_at))
+          .limit(3)
+
+        const postsWithCats = await Promise.all(
+          rows.map(async ({ post: p }) => {
+            const catRows = await db
+              .select({ category: categories })
+              .from(postCategories)
+              .innerJoin(categories, eq(categories.id, postCategories.category_id))
+              .where(eq(postCategories.post_id, p.id))
+              .limit(3)
+            return {
+              ...p,
+              published_at: p.published_at?.toISOString() ?? null,
+              categories: catRows.map((r) => r.category),
+            }
+          })
+        )
+        return { category: cat, posts: postsWithCats }
+      })
+    )
+    return sections.filter((s) => s.posts.length > 0)
+  } catch {
+    return []
+  }
+}
+
 export default async function HomePage({
   searchParams,
 }: {
@@ -44,7 +104,11 @@ export default async function HomePage({
 }) {
   const { template } = await getSettings()
 
-  const pageLimit = template === 'portal' ? '10' : template === 'business' ? '12' : '9'
+  const pageLimit =
+    template === 'portal' ? '10' :
+    template === 'business' ? '12' :
+    template === 'news' ? '0' :
+    '9'
   const [postsData, categoriesData] = await Promise.all([
     getPosts({ page: searchParams.page ?? '1', limit: pageLimit, ...searchParams }),
     getCategories(),
@@ -59,6 +123,27 @@ export default async function HomePage({
         <Suspense>
           <Pagination currentPage={postsData.page} totalPages={postsData.pages} />
         </Suspense>
+      </div>
+    )
+  }
+
+  if (template === 'news') {
+    const sections = await getNewsSections()
+    return (
+      <div className="flex gap-8">
+        <div className="flex-1 min-w-0">
+          {sections.length === 0 && (
+            <p className="text-gray-500">Nenhum post publicado ainda.</p>
+          )}
+          {sections.map(({ category, posts: sectionPosts }) => (
+            <CategorySection key={category.id} category={category} posts={sectionPosts} />
+          ))}
+        </div>
+        <div className="hidden lg:block w-72 shrink-0">
+          <div className="sticky top-24">
+            <NewsSidebar />
+          </div>
+        </div>
       </div>
     )
   }
