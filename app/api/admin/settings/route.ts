@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { db } from '@/drizzle/db'
 import { siteSettings } from '@/drizzle/schema'
 import { getSettings } from '@/lib/settings'
+import { eq } from 'drizzle-orm'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,6 +50,12 @@ const putSchema = z.object({
       subtitle: z.string().max(500).optional(),
     })
     .optional(),
+  telegram: z
+    .object({
+      bot_token: z.string().optional(),
+      allowed_chat_ids: z.string().max(500).optional(),
+    })
+    .optional(),
 })
 
 export async function GET() {
@@ -72,7 +79,7 @@ export async function PUT(request: Request) {
       )
     }
 
-    const { template, colors, company, ai, newsletter } = parsed.data
+    const { template, colors, company, ai, newsletter, telegram } = parsed.data
     const now = new Date()
 
     if (template !== undefined) {
@@ -124,6 +131,26 @@ export async function PUT(request: Request) {
         .insert(siteSettings)
         .values({ key: 'newsletter_config', value: newsletterJson, updated_at: now })
         .onConflictDoUpdate({ target: siteSettings.key, set: { value: newsletterJson, updated_at: now } })
+    }
+
+    if (telegram !== undefined) {
+      const rows = await db
+        .select()
+        .from(siteSettings)
+        .where(eq(siteSettings.key, 'telegram_config'))
+        .limit(1)
+      const existing = rows.length > 0 && rows[0].value
+        ? JSON.parse(rows[0].value)
+        : { bot_token: '', allowed_chat_ids: '' }
+      const merged = { ...existing, ...telegram }
+      const telegramJson = JSON.stringify(merged)
+      await db
+        .insert(siteSettings)
+        .values({ key: 'telegram_config', value: telegramJson, updated_at: now })
+        .onConflictDoUpdate({
+          target: siteSettings.key,
+          set: { value: telegramJson, updated_at: now },
+        })
     }
 
     const current = await getSettings()
