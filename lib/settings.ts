@@ -9,9 +9,24 @@ export interface ThemeColors {
   surface: string
 }
 
+export interface CompanyInfo {
+  blog_name: string
+  blog_description: string
+  company_name: string
+  company_email: string
+  company_phone: string
+  company_address: string
+  company_cnpj: string
+  social_facebook: string
+  social_instagram: string
+  social_twitter: string
+  social_youtube: string
+}
+
 export interface SiteSettings {
   template: string
   colors: ThemeColors
+  company: CompanyInfo
 }
 
 const COLOR_DEFAULTS: Record<string, ThemeColors> = {
@@ -56,6 +71,20 @@ export function lightenHex(hex: string, factor = 0.9): string {
   return rgbToHex(r + (255 - r) * factor, g + (255 - g) * factor, b + (255 - b) * factor)
 }
 
+export const DEFAULT_COMPANY: CompanyInfo = {
+  blog_name: '',
+  blog_description: '',
+  company_name: '',
+  company_email: '',
+  company_phone: '',
+  company_address: '',
+  company_cnpj: '',
+  social_facebook: '',
+  social_instagram: '',
+  social_twitter: '',
+  social_youtube: '',
+}
+
 export const getSettings = cache(async (): Promise<SiteSettings> => {
   try {
     const rows = await db.select().from(siteSettings)
@@ -65,8 +94,11 @@ export const getSettings = cache(async (): Promise<SiteSettings> => {
     const storedColors = map['theme_colors'] ? (JSON.parse(map['theme_colors']) as Partial<ThemeColors>) : {}
     const colors: ThemeColors = { ...defaultColors(template), ...storedColors }
 
-    return { template, colors }
+    const storedCompany = map['company_info'] ? (JSON.parse(map['company_info']) as Partial<CompanyInfo>) : {}
+    const company: CompanyInfo = { ...DEFAULT_COMPANY, ...storedCompany }
+
+    return { template, colors, company }
   } catch {
-    return { template: 'default', colors: defaultColors('default') }
+    return { template: 'default', colors: defaultColors('default'), company: DEFAULT_COMPANY }
   }
 })

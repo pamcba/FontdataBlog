@@ -179,7 +179,7 @@ export function ApparenceClient({ initial }: Props) {
                   Ativo
                 </span>
               )}
-              <div className="mb-3 rounded overflow-hidden border border-gray-100">
+              <div className="mb-3 rounded overflow-hidden border border-gray-100 max-h-32">
                 {opt.preview}
               </div>
               <p className="font-semibold text-neutral-900">{opt.name}</p>

@@ -20,6 +20,21 @@ const putSchema = z.object({
       surface: hexColor,
     })
     .optional(),
+  company: z
+    .object({
+      blog_name: z.string().max(100).optional(),
+      blog_description: z.string().max(500).optional(),
+      company_name: z.string().max(150).optional(),
+      company_email: z.string().email().or(z.literal('')).optional(),
+      company_phone: z.string().max(30).optional(),
+      company_address: z.string().max(300).optional(),
+      company_cnpj: z.string().max(20).optional(),
+      social_facebook: z.string().max(200).optional(),
+      social_instagram: z.string().max(200).optional(),
+      social_twitter: z.string().max(200).optional(),
+      social_youtube: z.string().max(200).optional(),
+    })
+    .optional(),
 })
 
 export async function GET() {
@@ -43,7 +58,7 @@ export async function PUT(request: Request) {
       )
     }
 
-    const { template, colors } = parsed.data
+    const { template, colors, company } = parsed.data
     const now = new Date()
 
     if (template !== undefined) {
@@ -59,6 +74,16 @@ export async function PUT(request: Request) {
         .insert(siteSettings)
         .values({ key: 'theme_colors', value: colorsJson, updated_at: now })
         .onConflictDoUpdate({ target: siteSettings.key, set: { value: colorsJson, updated_at: now } })
+    }
+
+    if (company !== undefined) {
+      const current = await getSettings()
+      const merged = { ...current.company, ...company }
+      const companyJson = JSON.stringify(merged)
+      await db
+        .insert(siteSettings)
+        .values({ key: 'company_info', value: companyJson, updated_at: now })
+        .onConflictDoUpdate({ target: siteSettings.key, set: { value: companyJson, updated_at: now } })
     }
 
     const current = await getSettings()
