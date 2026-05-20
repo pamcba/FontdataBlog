@@ -1,7 +1,9 @@
 import { Header } from '@/components/layout/Header'
 import { PortalHeader } from '@/components/layout/PortalHeader'
 import { BusinessHeader } from '@/components/layout/BusinessHeader'
+import { NewsHeader } from '@/components/layout/NewsHeader'
 import { Footer } from '@/components/layout/Footer'
+import { AnalyticsTracker } from '@/components/blog/AnalyticsTracker'
 import { getSettings } from '@/lib/settings'
 import type { Metadata } from 'next'
 
@@ -28,11 +30,15 @@ export default async function PublicLayout({ children }: { children: React.React
         ? <PortalHeader blogName={blogName} logoUrl={logoUrl} />
         : template === 'business'
           ? <BusinessHeader blogName={blogName} logoUrl={logoUrl} />
-          : <Header blogName={blogName} logoUrl={logoUrl} />
+          : template === 'news'
+            ? <NewsHeader blogName={blogName} logoUrl={logoUrl} />
+            : <Header blogName={blogName} logoUrl={logoUrl} />
       }
       <main
         className={`flex-1 w-full mx-auto px-4 py-8 ${
-          template === 'portal' || template === 'business' ? 'max-w-7xl' : 'max-w-6xl'
+          template === 'portal' || template === 'business' || template === 'news'
+            ? 'max-w-7xl'
+            : 'max-w-6xl'
         }`}
       >
         {children}
@@ -47,6 +53,7 @@ export default async function PublicLayout({ children }: { children: React.React
         socialTwitter={company.social_twitter}
         socialYoutube={company.social_youtube}
       />
+      <AnalyticsTracker />
     </div>
   )
 }
