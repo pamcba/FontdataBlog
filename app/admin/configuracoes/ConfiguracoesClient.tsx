@@ -233,42 +233,106 @@ export function ConfiguracoesClient({ initial, initialAI, initialTelegram }: Pro
         return (
           <section className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-neutral-900 mb-1">Telegram Bot</h2>
-            <p className="text-sm text-gray-500 mb-5">
-              Integre um bot do Telegram para gerar e publicar artigos enviando um tema ou link. Crie seu bot via{' '}
-              <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-brand-primary underline">
-                @BotFather
-              </a>{' '}
-              e cole o token abaixo.
+            <p className="text-sm text-gray-500 mb-6">
+              Envie um tema ou link para o bot e o sistema gera, publica o artigo e devolve o link automaticamente.
             </p>
+
+            {/* Passo a passo */}
+            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 space-y-4">
+              <p className="text-sm font-semibold text-blue-800">Como configurar — siga a ordem abaixo:</p>
+
+              <div className="flex gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">1</span>
+                <div className="text-sm text-blue-900">
+                  <p className="font-medium mb-1">Criar o bot no Telegram</p>
+                  <ol className="list-decimal list-inside space-y-1 text-blue-800 text-xs">
+                    <li>Abra o Telegram e pesquise por <strong>@BotFather</strong></li>
+                    <li>Envie o comando <code className="bg-blue-100 px-1 rounded">/newbot</code></li>
+                    <li>Digite um nome para o bot (ex: <em>Meu Blog Bot</em>)</li>
+                    <li>Digite um username para o bot — deve terminar em <em>bot</em> (ex: <em>meublog_bot</em>)</li>
+                    <li>O BotFather vai responder com o <strong>Token</strong> — copie e cole no campo abaixo</li>
+                  </ol>
+                  <p className="mt-2 text-xs text-blue-700">
+                    O token tem o formato: <code className="bg-blue-100 px-1 rounded">123456789:ABCDEFGabcdefg...</code>
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">2</span>
+                <div className="text-sm text-blue-900">
+                  <p className="font-medium mb-1">Cole o token abaixo e salve</p>
+                  <p className="text-xs text-blue-800">Preencha o campo <strong>Token do Bot</strong> e clique em <strong>Salvar alterações</strong> antes de continuar.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">3</span>
+                <div className="text-sm text-blue-900">
+                  <p className="font-medium mb-1">Registrar o Webhook</p>
+                  <p className="text-xs text-blue-800">Clique no botão <strong>Registrar Webhook</strong> no final desta seção. Isso conecta seu bot ao sistema.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">4</span>
+                <div className="text-sm text-blue-900">
+                  <p className="font-medium mb-1">Descobrir seu Chat ID</p>
+                  <ol className="list-decimal list-inside space-y-1 text-blue-800 text-xs">
+                    <li>Abra uma conversa com o seu bot no Telegram (pesquise pelo username que você criou)</li>
+                    <li>Envie o comando <code className="bg-blue-100 px-1 rounded">/start</code></li>
+                    <li>O bot vai responder com o seu <strong>Chat ID</strong> — copie o número</li>
+                    <li>Cole no campo <strong>Chat IDs autorizados</strong> abaixo</li>
+                    <li>Salve as configurações novamente</li>
+                  </ol>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center">✓</span>
+                <div className="text-sm text-blue-900">
+                  <p className="font-medium mb-1">Pronto! Como usar</p>
+                  <ul className="list-disc list-inside space-y-1 text-blue-800 text-xs">
+                    <li>Envie um <strong>tema</strong> (ex: <em>"Como o BJJ mudou o MMA"</em>) para gerar um artigo original</li>
+                    <li>Envie um <strong>link</strong> (ex: <em>https://exemplo.com/noticia</em>) para reescrever o conteúdo</li>
+                    <li>O bot publica o artigo e devolve o link</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Campos */}
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Token do Bot</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Token do Bot <span className="text-gray-400 font-normal">(obtido no @BotFather — passo 1)</span>
+                </label>
                 <input
                   type="password"
                   value={telegram.bot_token}
                   onChange={(e) => handleTelegramChange('bot_token', e.target.value)}
-                  placeholder="123456789:ABC-DEF..."
+                  placeholder="123456789:ABCDEFGabcdefg..."
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Chat IDs autorizados
+                  Chat IDs autorizados <span className="text-gray-400 font-normal">(obtido no passo 4)</span>
                 </label>
                 <input
                   type="text"
                   value={telegram.allowed_chat_ids}
                   onChange={(e) => handleTelegramChange('allowed_chat_ids', e.target.value)}
-                  placeholder="123456789, 987654321"
+                  placeholder="123456789"
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 />
                 <p className="mt-1 text-xs text-gray-500">
-                  IDs separados por vírgula. Deixe vazio para aceitar qualquer chat (não recomendado). Para descobrir seu ID, envie <code className="bg-gray-100 px-1 rounded">/start</code> para o bot após registrar o webhook.
+                  Para autorizar mais de uma pessoa, separe os IDs por vírgula. Deixar vazio permite que qualquer pessoa use o bot — não recomendado.
                 </p>
               </div>
-              <div className="border-t border-gray-100 pt-4 mt-2">
+              <div className="border-t border-gray-100 pt-4">
                 <p className="text-sm text-gray-600 mb-3">
-                  Após salvar as configurações, registre o webhook para que o Telegram saiba onde entregar as mensagens.
+                  Salve as configurações acima antes de registrar o webhook.
                 </p>
                 <button
                   type="button"
