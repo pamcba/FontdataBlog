@@ -21,6 +21,7 @@
     "@tiptap/starter-kit": "^2.3.0",
     "bcryptjs": "^2.4.3",
     "chart.js": "^4.5.1",
+    "cheerio": "^1.2.0",
     "css-tree": "^3.2.1",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
