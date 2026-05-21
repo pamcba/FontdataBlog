@@ -9,6 +9,60 @@ export interface ThemeColors {
   surface: string
 }
 
+export interface DesignSystem {
+  font_sans: string
+  font_serif: string
+  font_mono: string
+  font_size_base: string
+  font_size_sm: string
+  font_size_lg: string
+  font_size_xl: string
+  font_size_2xl: string
+  font_size_3xl: string
+  line_height_base: string
+  font_weight_normal: string
+  font_weight_medium: string
+  font_weight_bold: string
+  spacing_base: string
+  radius_sm: string
+  radius_md: string
+  radius_lg: string
+  radius_full: string
+  color_text_primary: string
+  color_text_secondary: string
+  color_border: string
+  color_error: string
+  color_success: string
+  color_warning: string
+}
+
+export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
+  font_sans: 'Inter, system-ui, sans-serif',
+  font_serif: '"Source Serif 4", Georgia, serif',
+  font_mono: '"JetBrains Mono", monospace',
+  font_size_base: '16px',
+  font_size_sm: '14px',
+  font_size_lg: '18px',
+  font_size_xl: '20px',
+  font_size_2xl: '24px',
+  font_size_3xl: '30px',
+  line_height_base: '1.75',
+  font_weight_normal: '400',
+  font_weight_medium: '500',
+  font_weight_bold: '700',
+  spacing_base: '4px',
+  radius_sm: '4px',
+  radius_md: '8px',
+  radius_lg: '12px',
+  radius_full: '9999px',
+  color_text_primary: '#1A1A2E',
+  color_text_secondary: '#4B5563',
+  color_border: '#E5E7EB',
+  color_error: '#DC2626',
+  color_success: '#16A34A',
+  color_warning: '#D97706',
+}
+
 export interface CompanyInfo {
   logo_url: string
   blog_name: string
@@ -41,6 +95,7 @@ export interface SiteSettings {
   colors: ThemeColors
   company: CompanyInfo
   newsletter: NewsletterConfig
+  design_system: DesignSystem
 }
 
 const COLOR_DEFAULTS: Record<string, ThemeColors> = {
@@ -133,8 +188,11 @@ export const getSettings = cache(async (): Promise<SiteSettings> => {
     const storedNewsletter = map['newsletter_config'] ? (JSON.parse(map['newsletter_config']) as Partial<NewsletterConfig>) : {}
     const newsletter: NewsletterConfig = { ...DEFAULT_NEWSLETTER, ...storedNewsletter }
 
-    return { template, colors, company, newsletter }
+    const storedDS = map['design_system'] ? (JSON.parse(map['design_system']) as Partial<DesignSystem>) : {}
+    const design_system: DesignSystem = { ...DEFAULT_DESIGN_SYSTEM, ...storedDS }
+
+    return { template, colors, company, newsletter, design_system }
   } catch {
-    return { template: 'default', colors: defaultColors('default'), company: DEFAULT_COMPANY, newsletter: DEFAULT_NEWSLETTER }
+    return { template: 'default', colors: defaultColors('default'), company: DEFAULT_COMPANY, newsletter: DEFAULT_NEWSLETTER, design_system: DEFAULT_DESIGN_SYSTEM }
   }
 })
