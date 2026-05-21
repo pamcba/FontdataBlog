@@ -6,6 +6,7 @@ import { TechHeader } from '@/components/layout/TechHeader'
 import { Footer } from '@/components/layout/Footer'
 import { NewsletterSection } from '@/components/blog/NewsletterSection'
 import { getSettings } from '@/lib/settings'
+import { getAppUrl } from '@/lib/app-url'
 import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
@@ -13,7 +14,7 @@ export const dynamic = 'force-dynamic'
 export async function generateMetadata(): Promise<Metadata> {
   const { company } = await getSettings()
   const blogName = company.blog_name || process.env.NEXT_PUBLIC_BLOG_NAME || 'Blog'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const baseUrl = getAppUrl()
   return {
     title: { default: blogName, template: `%s | ${blogName}` },
     alternates: { types: { 'application/rss+xml': `${baseUrl}/feed.xml` } },

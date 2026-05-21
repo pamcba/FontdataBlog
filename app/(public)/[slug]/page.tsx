@@ -2,10 +2,11 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/Badge'
+import { getAppUrl } from '@/lib/app-url'
 
 async function getPost(slug: string) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/posts/${slug}`,
+    `${getAppUrl()}/api/posts/${slug}`,
     { cache: 'no-store' }
   )
   if (res.status === 404) return null
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     title: post.title,
     description: post.excerpt,
     alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_APP_URL}/${post.slug}`,
+      canonical: `${getAppUrl()}/${post.slug}`,
     },
     openGraph: {
       title: post.title,

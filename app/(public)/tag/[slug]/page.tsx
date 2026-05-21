@@ -2,11 +2,12 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { PostGrid } from '@/components/blog/PostGrid'
+import { getAppUrl } from '@/lib/app-url'
 
 async function getData(slug: string, page: string) {
   const [postsRes, tagsRes] = await Promise.all([
-    fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/posts?tag=${slug}&page=${page}&limit=9`, { cache: 'no-store' }),
-    fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/tags`, { next: { revalidate: 300 } }),
+    fetch(`${getAppUrl()}/api/posts?tag=${slug}&page=${page}&limit=9`, { cache: 'no-store' }),
+    fetch(`${getAppUrl()}/api/tags`, { next: { revalidate: 300 } }),
   ])
   const postsData = postsRes.ok ? await postsRes.json() : { posts: [] }
   const tagsData = tagsRes.ok ? await tagsRes.json() : { tags: [] }

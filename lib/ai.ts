@@ -1,3 +1,5 @@
+import { getAppUrl } from '@/lib/app-url'
+
 export type AIFeature =
   | 'content_generation'
   | 'title_suggestion'
@@ -88,7 +90,7 @@ export async function callOpenRouter(
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${key}`,
-      'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
+      'HTTP-Referer': getAppUrl(),
       'X-Title': process.env.NEXT_PUBLIC_BLOG_NAME ?? 'Blog',
     },
     body: JSON.stringify({
@@ -204,7 +206,7 @@ export async function callOpenRouterImage(
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${key}`,
-      'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
+      'HTTP-Referer': getAppUrl(),
       'X-Title': process.env.NEXT_PUBLIC_BLOG_NAME ?? 'Blog',
     },
     body: JSON.stringify({

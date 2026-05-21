@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { getSettings, darkenHex, lightenHex } from '@/lib/settings'
+import { getAppUrl } from '@/lib/app-url'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
       default: blogName,
     },
     description: company.blog_description || 'Tecnologia, gestão e inovação para empresas',
-    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'),
+    metadataBase: new URL(getAppUrl()),
   }
 }
 

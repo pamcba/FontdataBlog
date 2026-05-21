@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getAppUrl } from '@/lib/app-url'
 import {
   getTelegramConfig,
   computeWebhookSecret,
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
   await sendTelegramMessage(config.bot_token, chatId, '⏳ Gerando artigo, aguarde...')
 
   try {
-    const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '')
+    const appUrl = getAppUrl().replace(/\/$/, '')
     const { title, slug } = await generateAndPublishPost(text)
     const postUrl = `${appUrl}/${slug}`
 

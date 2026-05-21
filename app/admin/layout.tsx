@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { verifyToken } from '@/lib/auth'
 import { getSettings } from '@/lib/settings'
+import { getAppUrl } from '@/lib/app-url'
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: '📊' },
@@ -52,7 +53,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="p-3 border-t border-white/20">
           <form action={async () => {
             'use server'
-            await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/auth/logout`, { method: 'POST' })
+            await fetch(`${getAppUrl()}/api/auth/logout`, { method: 'POST' })
             redirect('/admin/login')
           }}>
             <button

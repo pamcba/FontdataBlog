@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getTelegramConfig, computeWebhookSecret } from '@/lib/telegram'
+import { getAppUrl } from '@/lib/app-url'
 
 export async function POST() {
   const config = await getTelegramConfig()
@@ -10,15 +11,7 @@ export async function POST() {
     )
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL
-  if (!appUrl) {
-    return NextResponse.json(
-      { error: 'NEXT_PUBLIC_APP_URL não configurado no servidor.' },
-      { status: 400 }
-    )
-  }
-
-  const webhookUrl = `${appUrl.replace(/\/$/, '')}/api/telegram/webhook`
+  const webhookUrl = `${getAppUrl().replace(/\/$/, '')}/api/telegram/webhook`
   const secretToken = computeWebhookSecret(config.bot_token)
 
   const response = await fetch(

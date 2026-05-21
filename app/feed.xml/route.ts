@@ -2,6 +2,7 @@ import { db } from '@/drizzle/db'
 import { posts, categories, tags, postCategories, postTags } from '@/drizzle/schema'
 import { eq, and, inArray, sql, desc } from 'drizzle-orm'
 import { getSettings } from '@/lib/settings'
+import { getAppUrl } from '@/lib/app-url'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,7 +17,7 @@ function escapeXml(str: string): string {
 
 export async function GET() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const baseUrl = getAppUrl()
     const { company } = await getSettings()
     const blogName = company.blog_name || process.env.NEXT_PUBLIC_BLOG_NAME || 'Blog'
     const blogDescription = company.blog_description || `${blogName} - Feed RSS`

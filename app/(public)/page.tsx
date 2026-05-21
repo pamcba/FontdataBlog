@@ -6,6 +6,7 @@ import { HeroPost } from '@/components/blog/HeroPost'
 import { EditorialGrid } from '@/components/blog/EditorialGrid'
 import { Pagination } from '@/components/ui/Pagination'
 import { getSettings } from '@/lib/settings'
+import { getAppUrl } from '@/lib/app-url'
 import { FeaturedSection } from '@/components/blog/FeaturedSection'
 import { PostCardBusiness } from '@/components/blog/PostCardBusiness'
 import { CategorySection } from '@/components/blog/CategorySection'
@@ -28,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
 async function getPosts(searchParams: Record<string, string>) {
   const params = new URLSearchParams(searchParams)
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/posts?${params.toString()}`,
+    `${getAppUrl()}/api/posts?${params.toString()}`,
     { cache: 'no-store' }
   )
   if (!res.ok) return { posts: [], total: 0, page: 1, pages: 1 }
@@ -36,7 +37,7 @@ async function getPosts(searchParams: Record<string, string>) {
 }
 
 async function getCategories() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/categories`, {
+  const res = await fetch(`${getAppUrl()}/api/categories`, {
     next: { revalidate: 300 },
   })
   if (!res.ok) return { categories: [] }

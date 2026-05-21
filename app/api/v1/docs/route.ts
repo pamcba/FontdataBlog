@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import { getSettings } from '@/lib/settings'
+import { getAppUrl } from '@/lib/app-url'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  const baseUrl = getAppUrl()
   const settings = await getSettings()
   const blogName = settings.company.blog_name || process.env.NEXT_PUBLIC_BLOG_NAME || 'Blog'
 
