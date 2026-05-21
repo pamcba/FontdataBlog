@@ -1,0 +1,29 @@
+// Pure constants with no server-side imports — safe to use in client components.
+import type { DesignSystem } from './settings'
+
+export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
+  font_sans: 'Inter, system-ui, sans-serif',
+  font_serif: '"Source Serif 4", Georgia, serif',
+  font_mono: '"JetBrains Mono", monospace',
+  font_size_base: '16px',
+  font_size_sm: '14px',
+  font_size_lg: '18px',
+  font_size_xl: '20px',
+  font_size_2xl: '24px',
+  font_size_3xl: '30px',
+  line_height_base: '1.75',
+  font_weight_normal: '400',
+  font_weight_medium: '500',
+  font_weight_bold: '700',
+  spacing_base: '4px',
+  radius_sm: '4px',
+  radius_md: '8px',
+  radius_lg: '12px',
+  radius_full: '9999px',
+  color_text_primary: '#1A1A2E',
+  color_text_secondary: '#4B5563',
+  color_border: '#E5E7EB',
+  color_error: '#DC2626',
+  color_success: '#16A34A',
+  color_warning: '#D97706',
+}

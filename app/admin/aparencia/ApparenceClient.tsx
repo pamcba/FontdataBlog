@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import type { SiteSettings, ThemeColors, DesignSystem } from '@/lib/settings'
-import { DEFAULT_DESIGN_SYSTEM } from '@/lib/settings'
+import { DEFAULT_DESIGN_SYSTEM } from '@/lib/settings-constants'
 import { ImageUpload } from '@/components/ui/ImageUpload'
 import { DesignSystemImporter } from './DesignSystemImporter'
 
