@@ -77,6 +77,10 @@ export function DesignSystemImporter({ onApply, onLogoApply }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
       })
+      const contentType = res.headers.get('content-type') ?? ''
+      if (!contentType.includes('application/json')) {
+        throw new Error(`Resposta inesperada do servidor (status ${res.status})`)
+      }
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Erro desconhecido')
       setExtracted(data as ExtractedTokens)

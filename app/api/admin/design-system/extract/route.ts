@@ -218,7 +218,10 @@ export async function POST(request: Request) {
     if (msg.includes('abort') || msg.includes('timeout')) {
       return NextResponse.json({ error: 'Timeout ao acessar a URL (limite: 10s)' }, { status: 504 })
     }
+    if (msg.includes('ENOTFOUND') || msg.includes('ECONNREFUSED') || msg.includes('failed to fetch') || msg.includes('fetch failed')) {
+      return NextResponse.json({ error: 'Não foi possível conectar ao site. Verifique a URL e tente novamente.' }, { status: 502 })
+    }
     console.error('[design-system extract]', msg)
-    return NextResponse.json({ error: 'Erro ao extrair design system' }, { status: 500 })
+    return NextResponse.json({ error: `Erro ao extrair design system: ${msg}` }, { status: 500 })
   }
 }
