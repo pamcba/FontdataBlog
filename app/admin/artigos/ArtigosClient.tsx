@@ -4,18 +4,19 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/Badge'
 import NewArticleModal from './NewArticleModal'
+import AgentsSection from './AgentsSection'
 import type { Post } from '@/drizzle/schema'
 import type { ArticleGenerationConfig, ArticleVoiceTone, ArticleLanguage } from '@/lib/article-config-types'
 import { ARTICLE_CONFIG_DEFAULTS } from '@/lib/article-config-types'
 
-type SectionId = 'lista' | 'temas' | 'briefing' | 'automacao' | 'prompts' | 'configuracao'
+type SectionId = 'lista' | 'temas' | 'briefing' | 'automacao' | 'agentes' | 'configuracao'
 
 const SIDEBAR_ITEMS: { id: SectionId; label: string; icon: string }[] = [
   { id: 'lista', label: 'Lista de Artigos', icon: '📝' },
   { id: 'temas', label: 'Temas', icon: '💡' },
   { id: 'briefing', label: 'Briefing', icon: '📋' },
   { id: 'automacao', label: 'Automação', icon: '🤖' },
-  { id: 'prompts', label: 'Prompts de IA', icon: '✨' },
+  { id: 'agentes', label: 'Agentes de IA', icon: '🤖' },
   { id: 'configuracao', label: 'Configurações', icon: '⚙️' },
 ]
 
@@ -32,8 +33,8 @@ export default function ArtigosClient() {
         return <BriefingSection />
       case 'automacao':
         return <AutomacaoSection />
-      case 'prompts':
-        return <PromptsSection />
+      case 'agentes':
+        return <AgentsSection />
       case 'configuracao':
         return <ConfiguracaoArtigosSection />
     }
@@ -939,180 +940,6 @@ function AutomacaoSection() {
           className="bg-brand-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-brand-primary-dark transition-colors disabled:opacity-50"
         >
           {saving ? 'Salvando...' : 'Salvar Configuração'}
-        </button>
-      </div>
-    </section>
-  )
-}
-
-type PromptField = {
-  key: 'title' | 'article' | 'cta' | 'image'
-  label: string
-  description: string
-  placeholder: string
-  rows: number
-}
-
-const PROMPT_FIELDS: PromptField[] = [
-  {
-    key: 'title',
-    label: 'Prompt para Títulos',
-    description: 'Prompt usado pela IA para gerar títulos de artigos.',
-    placeholder: 'Ex: Você é um especialista em copywriting. Gere 5 opções de títulos atrativos e otimizados para SEO...',
-    rows: 6,
-  },
-  {
-    key: 'article',
-    label: 'Prompt para Artigos',
-    description: 'Prompt usado pela IA para gerar artigos completos.',
-    placeholder: 'Ex: Você é um redator profissional. Escreva um artigo completo sobre o tema proposto...',
-    rows: 8,
-  },
-  {
-    key: 'cta',
-    label: 'Prompt para CTA',
-    description: 'Prompt usado pela IA para gerar chamadas para ação (Call to Action).',
-    placeholder: 'Ex: Crie um CTA persuasivo e contextualizado com o conteúdo do artigo...',
-    rows: 6,
-  },
-  {
-    key: 'image',
-    label: 'Prompt para Imagens',
-    description: 'Prompt usado pela IA para gerar descrições de imagens.',
-    placeholder: 'Ex: Crie uma descrição detalhada de imagem para ilustrar o artigo...',
-    rows: 6,
-  },
-]
-
-function SparkleIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3l1.912 5.813a2 2 0 001.275 1.275L21 12l-5.813 1.912a2 2 0 00-1.275 1.275L12 21l-1.912-5.813a2 2 0 00-1.275-1.275L3 12l5.813-1.912a2 2 0 001.275-1.275L12 3z" />
-    </svg>
-  )
-}
-
-function PromptsSection() {
-  const [prompts, setPrompts] = useState<Record<string, string>>({ title: '', article: '', cta: '', image: '' })
-  const [loading, setLoading] = useState<Record<string, boolean>>({})
-  const [saving, setSaving] = useState(false)
-  const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
-
-  useEffect(() => {
-    fetch('/api/admin/prompts')
-      .then((r) => (r.ok ? r.json() : {}))
-      .then((data: { prompts?: Record<string, string> }) => {
-        if (data.prompts) {
-          setPrompts({
-            title: data.prompts.title ?? '',
-            article: data.prompts.article ?? '',
-            cta: data.prompts.cta ?? '',
-            image: data.prompts.image ?? '',
-          })
-        }
-      })
-      .catch(() => {})
-  }, [])
-
-  async function handleGenerate(key: string) {
-    setLoading((prev) => ({ ...prev, [key]: true }))
-    setToast(null)
-    try {
-      const res = await fetch('/api/admin/prompts/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: key }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? 'Erro ao gerar prompt')
-      setPrompts((prev) => ({ ...prev, [key]: data.prompt }))
-      setToast({ type: 'success', msg: `Prompt de ${PROMPT_FIELDS.find((f) => f.key === key)?.label ?? key} gerado!` })
-    } catch (err) {
-      setToast({ type: 'error', msg: err instanceof Error ? err.message : 'Erro ao gerar prompt' })
-    } finally {
-      setLoading((prev) => ({ ...prev, [key]: false }))
-    }
-  }
-
-  async function handleSave() {
-    setSaving(true)
-    setToast(null)
-    try {
-      const res = await fetch('/api/admin/prompts', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(prompts),
-      })
-      if (!res.ok) throw new Error('Erro ao salvar')
-      setToast({ type: 'success', msg: 'Prompts salvos com sucesso!' })
-    } catch {
-      setToast({ type: 'error', msg: 'Erro ao salvar prompts' })
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  return (
-    <section className="bg-white rounded-xl border border-gray-200 p-6">
-      <h2 className="text-lg font-semibold text-neutral-900 mb-1">Prompts de IA</h2>
-      <p className="text-sm text-gray-500 mb-6">
-        Configure os prompts padrão utilizados pela IA para cada tipo de geração. Clique no ícone <SparkleIcon className="inline h-4 w-4 text-brand-primary" /> para que a IA gere o prompt automaticamente com base no briefing do cliente.
-      </p>
-
-      {toast && (
-        <div
-          className={`mb-4 px-4 py-3 rounded-lg text-sm ${
-            toast.type === 'success'
-              ? 'bg-green-50 text-green-800 border border-green-200'
-              : 'bg-red-50 text-red-800 border border-red-200'
-          }`}
-        >
-          {toast.msg}
-        </div>
-      )}
-
-      <div className="space-y-6">
-        {PROMPT_FIELDS.map((field) => (
-          <div key={field.key}>
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-sm font-medium text-gray-700">{field.label}</label>
-              <button
-                type="button"
-                onClick={() => handleGenerate(field.key)}
-                disabled={loading[field.key]}
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-brand-primary hover:text-brand-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                title={`Gerar prompt de ${field.label} com IA`}
-              >
-                {loading[field.key] ? (
-                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                ) : (
-                  <SparkleIcon className="h-4 w-4" />
-                )}
-                {loading[field.key] ? 'Gerando...' : 'Gerar com IA'}
-              </button>
-            </div>
-            <p className="text-xs text-gray-500 mb-2">{field.description}</p>
-            <textarea
-              value={prompts[field.key]}
-              onChange={(e) => setPrompts((prev) => ({ ...prev, [field.key]: e.target.value }))}
-              rows={field.rows}
-              placeholder={field.placeholder}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary resize-y leading-relaxed"
-            />
-          </div>
-        ))}
-      </div>
-
-      <div className="flex justify-end mt-6">
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="bg-brand-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-brand-primary-dark transition-colors disabled:opacity-50"
-        >
-          {saving ? 'Salvando...' : 'Salvar Prompts'}
         </button>
       </div>
     </section>
