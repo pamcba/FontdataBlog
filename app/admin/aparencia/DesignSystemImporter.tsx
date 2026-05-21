@@ -9,6 +9,7 @@ interface ExtractedTokens {
   colors: string[]
   border_radii: string[]
   font_sizes: string[]
+  logo_candidates: string[]
   source_url: string
 }
 
@@ -53,14 +54,17 @@ function mapCustomPropertiesToDS(props: Record<string, string>): Partial<DesignS
 
 interface Props {
   onApply: (tokens: Partial<DesignSystem>) => void
+  onLogoApply?: (url: string) => void
 }
 
-export function DesignSystemImporter({ onApply }: Props) {
+export function DesignSystemImporter({ onApply, onLogoApply }: Props) {
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [extracted, setExtracted] = useState<ExtractedTokens | null>(null)
   const [mapped, setMapped] = useState<Partial<DesignSystem> | null>(null)
+  const [logoLoading, setLogoLoading] = useState<string | null>(null)
+  const [logoError, setLogoError] = useState<string | null>(null)
 
   async function handleExtract() {
     setLoading(true)
@@ -86,6 +90,25 @@ export function DesignSystemImporter({ onApply }: Props) {
 
   function handleApply() {
     if (mapped) onApply(mapped)
+  }
+
+  async function handleFetchLogo(logoUrl: string) {
+    setLogoLoading(logoUrl)
+    setLogoError(null)
+    try {
+      const res = await fetch('/api/admin/design-system/fetch-logo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: logoUrl }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'Erro ao importar logo')
+      onLogoApply?.(data.url)
+    } catch (e) {
+      setLogoError(e instanceof Error ? e.message : 'Erro ao importar logo')
+    } finally {
+      setLogoLoading(null)
+    }
   }
 
   const mappedCount = mapped ? Object.keys(mapped).length : 0
@@ -162,6 +185,39 @@ export function DesignSystemImporter({ onApply }: Props) {
               </div>
             )}
           </div>
+
+          {extracted.logo_candidates.length > 0 && onLogoApply && (
+            <div>
+              <p className="text-xs font-semibold text-gray-700 mb-2">Logotipos encontrados</p>
+              {logoError && (
+                <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-2">
+                  {logoError}
+                </p>
+              )}
+              <div className="flex flex-wrap gap-3">
+                {extracted.logo_candidates.map((logoUrl) => (
+                  <div key={logoUrl} className="flex flex-col items-center gap-1.5">
+                    <div className="w-24 h-16 border border-gray-200 rounded-lg bg-gray-50 flex items-center justify-center overflow-hidden p-1">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={logoUrl}
+                        alt="logo candidato"
+                        className="max-w-full max-h-full object-contain"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                      />
+                    </div>
+                    <button
+                      onClick={() => handleFetchLogo(logoUrl)}
+                      disabled={logoLoading === logoUrl}
+                      className="text-xs text-brand-primary font-medium hover:underline disabled:opacity-50"
+                    >
+                      {logoLoading === logoUrl ? 'Importando...' : 'Usar este logo'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {mappedCount > 0 ? (
             <>

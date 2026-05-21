@@ -5,7 +5,7 @@ import { verifyToken } from '@/lib/auth'
 import { supabaseAdmin, STORAGE_BUCKET } from '@/lib/supabase-admin'
 
 const MAX_SIZE = 5 * 1024 * 1024
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']
 
 export const dynamic = 'force-dynamic'
 
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (!ALLOWED_TYPES.includes(file.type)) {
-    return NextResponse.json({ error: 'Formato não suportado. Use JPG, PNG, WebP ou GIF.' }, { status: 400 })
+    return NextResponse.json({ error: 'Formato não suportado. Use JPG, PNG, WebP, GIF ou SVG.' }, { status: 400 })
   }
 
   if (file.size > MAX_SIZE) {

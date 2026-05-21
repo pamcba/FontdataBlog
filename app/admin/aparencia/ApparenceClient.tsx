@@ -385,7 +385,7 @@ export function ApparenceClient({ initial }: Props) {
       {/* Design System Importer */}
       <section className="mb-8">
         <h2 className="text-lg font-semibold text-neutral-900 mb-2">Importar design do site</h2>
-        <DesignSystemImporter onApply={handleImportApply} />
+        <DesignSystemImporter onApply={handleImportApply} onLogoApply={setLogoUrl} />
       </section>
 
       {/* Color customizer */}
