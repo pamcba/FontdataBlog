@@ -56,6 +56,34 @@ const putSchema = z.object({
       allowed_chat_ids: z.string().max(500).optional(),
     })
     .optional(),
+  design_system: z
+    .object({
+      font_sans: z.string().max(200).optional(),
+      font_serif: z.string().max(200).optional(),
+      font_mono: z.string().max(200).optional(),
+      font_size_base: z.string().max(20).optional(),
+      font_size_sm: z.string().max(20).optional(),
+      font_size_lg: z.string().max(20).optional(),
+      font_size_xl: z.string().max(20).optional(),
+      font_size_2xl: z.string().max(20).optional(),
+      font_size_3xl: z.string().max(20).optional(),
+      line_height_base: z.string().max(20).optional(),
+      font_weight_normal: z.string().max(10).optional(),
+      font_weight_medium: z.string().max(10).optional(),
+      font_weight_bold: z.string().max(10).optional(),
+      spacing_base: z.string().max(20).optional(),
+      radius_sm: z.string().max(20).optional(),
+      radius_md: z.string().max(20).optional(),
+      radius_lg: z.string().max(20).optional(),
+      radius_full: z.string().max(20).optional(),
+      color_text_primary: hexColor.optional(),
+      color_text_secondary: hexColor.optional(),
+      color_border: hexColor.optional(),
+      color_error: hexColor.optional(),
+      color_success: hexColor.optional(),
+      color_warning: hexColor.optional(),
+    })
+    .optional(),
 })
 
 async function upsertSetting(key: string, value: string) {
@@ -128,6 +156,12 @@ export async function PUT(request: Request) {
       const current = await getSettings()
       const merged = { ...current.newsletter, ...newsletter }
       await upsertSetting('newsletter_config', JSON.stringify(merged))
+    }
+
+    if (parsed.data.design_system !== undefined) {
+      const current = await getSettings()
+      const merged = { ...current.design_system, ...parsed.data.design_system }
+      await upsertSetting('design_system', JSON.stringify(merged))
     }
 
     if (telegram !== undefined) {
