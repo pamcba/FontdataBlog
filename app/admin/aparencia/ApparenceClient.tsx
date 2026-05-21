@@ -16,32 +16,83 @@ const TEMPLATE_OPTIONS = [
     name: 'Default',
     description: 'Layout limpo com sidebar de categorias e grid de posts',
     preview: (
-      <svg viewBox="0 0 240 160" className="w-full" xmlns="http://www.w3.org/2000/svg">
-        {/* Header */}
-        <rect x="0" y="0" width="240" height="24" fill="#1A4FA0" rx="4" />
-        <rect x="8" y="8" width="60" height="8" fill="white" rx="2" />
-        <rect x="160" y="8" width="72" height="8" fill="white" opacity="0.5" rx="2" />
+      <svg viewBox="0 0 280 180" className="w-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="def-img1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#DDE2EA" />
+            <stop offset="100%" stopColor="#C8CDD7" />
+          </linearGradient>
+          <linearGradient id="def-img2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#E2E6EC" />
+            <stop offset="100%" stopColor="#CDD2DB" />
+          </linearGradient>
+        </defs>
+        {/* Browser chrome */}
+        <rect x="0" y="0" width="280" height="180" fill="#E4E7EC" rx="8" />
+        <rect x="2" y="2" width="276" height="176" fill="#F8F9FB" rx="7" />
+        {/* Chrome top bar */}
+        <rect x="2" y="2" width="276" height="16" fill="#ECEEF2" rx="7" />
+        <circle cx="11" cy="10" r="3" fill="#FC5F57" />
+        <circle cx="20" cy="10" r="3" fill="#FEBC2E" />
+        <circle cx="29" cy="10" r="3" fill="#28C840" />
+        <rect x="60" y="6" width="130" height="8" fill="white" rx="3" opacity="0.8" />
+        {/* Page header */}
+        <rect x="2" y="18" width="276" height="22" fill="#1A4FA0" />
+        <rect x="12" y="24" width="44" height="6" fill="white" rx="2" opacity="0.95" />
+        <rect x="170" y="25" width="22" height="4" fill="white" rx="1" opacity="0.45" />
+        <rect x="198" y="25" width="18" height="4" fill="white" rx="1" opacity="0.45" />
+        <rect x="222" y="25" width="20" height="4" fill="white" rx="1" opacity="0.45" />
+        <rect x="248" y="23" width="26" height="7" fill="white" rx="3" opacity="0.18" />
+        {/* Layout: sidebar + main */}
         {/* Sidebar */}
-        <rect x="0" y="28" width="56" height="132" fill="#f3f4f6" rx="2" />
-        <rect x="4" y="36" width="48" height="6" fill="#d1d5db" rx="1" />
-        <rect x="4" y="46" width="40" height="4" fill="#d1d5db" rx="1" />
-        <rect x="4" y="54" width="44" height="4" fill="#d1d5db" rx="1" />
-        <rect x="4" y="62" width="36" height="4" fill="#d1d5db" rx="1" />
-        {/* Post cards */}
-        <rect x="62" y="28" width="56" height="70" fill="white" rx="3" />
-        <rect x="62" y="28" width="56" height="32" fill="#e5e7eb" rx="3" />
-        <rect x="66" y="64" width="48" height="5" fill="#d1d5db" rx="1" />
-        <rect x="66" y="72" width="40" height="4" fill="#e5e7eb" rx="1" />
-        <rect x="124" y="28" width="56" height="70" fill="white" rx="3" />
-        <rect x="124" y="28" width="56" height="32" fill="#e5e7eb" rx="3" />
-        <rect x="128" y="64" width="48" height="5" fill="#d1d5db" rx="1" />
-        <rect x="128" y="72" width="40" height="4" fill="#e5e7eb" rx="1" />
-        <rect x="184" y="28" width="56" height="70" fill="white" rx="3" />
-        <rect x="184" y="28" width="56" height="32" fill="#e5e7eb" rx="3" />
-        <rect x="188" y="64" width="48" height="5" fill="#d1d5db" rx="1" />
-        <rect x="188" y="72" width="40" height="4" fill="#e5e7eb" rx="1" />
+        <rect x="10" y="46" width="58" height="122" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="16" y="53" width="32" height="4" fill="#1A4FA0" rx="1" opacity="0.7" />
+        <rect x="16" y="63" width="38" height="3" fill="#C8CDD7" rx="1" />
+        <rect x="16" y="70" width="30" height="3" fill="#D4D8DF" rx="1" />
+        <rect x="16" y="77" width="36" height="3" fill="#D4D8DF" rx="1" />
+        <rect x="16" y="84" width="26" height="3" fill="#D4D8DF" rx="1" />
+        <rect x="16" y="91" width="34" height="3" fill="#D4D8DF" rx="1" />
+        <rect x="16" y="98" width="28" height="3" fill="#D4D8DF" rx="1" />
+        {/* Divider */}
+        <rect x="16" y="107" width="40" height="0.5" fill="#E8EBF0" />
+        <rect x="16" y="113" width="32" height="3" fill="#C8CDD7" rx="1" opacity="0.6" />
+        {/* Tag pills in sidebar */}
+        <rect x="16" y="120" width="20" height="6" fill="#EEF2FF" stroke="#C7D2FE" strokeWidth="0.5" rx="3" />
+        <rect x="40" y="120" width="14" height="6" fill="#EEF2FF" stroke="#C7D2FE" strokeWidth="0.5" rx="3" />
+        <rect x="16" y="130" width="16" height="6" fill="#EEF2FF" stroke="#C7D2FE" strokeWidth="0.5" rx="3" />
+        <rect x="36" y="130" width="22" height="6" fill="#EEF2FF" stroke="#C7D2FE" strokeWidth="0.5" rx="3" />
+        {/* Post cards — 3 col */}
+        {/* Card 1 */}
+        <rect x="74" y="46" width="62" height="78" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="74" y="46" width="62" height="38" fill="url(#def-img1)" rx="4" />
+        <rect x="79" y="89" width="12" height="5" fill="#EEF2FF" stroke="#C7D2FE" strokeWidth="0.5" rx="2.5" />
+        <rect x="79" y="98" width="50" height="4" fill="#B0B8C8" rx="1" />
+        <rect x="79" y="105" width="38" height="3" fill="#CDD2DB" rx="1" opacity="0.7" />
+        <rect x="79" y="111" width="44" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
+        {/* Card 2 */}
+        <rect x="142" y="46" width="62" height="78" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="142" y="46" width="62" height="38" fill="url(#def-img2)" rx="4" />
+        <rect x="147" y="89" width="16" height="5" fill="#FFF3E8" stroke="#FDD0A8" strokeWidth="0.5" rx="2.5" />
+        <rect x="147" y="98" width="50" height="4" fill="#B0B8C8" rx="1" />
+        <rect x="147" y="105" width="42" height="3" fill="#CDD2DB" rx="1" opacity="0.7" />
+        <rect x="147" y="111" width="34" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
+        {/* Card 3 */}
+        <rect x="210" y="46" width="62" height="78" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="210" y="46" width="62" height="38" fill="url(#def-img1)" rx="4" />
+        <rect x="215" y="89" width="14" height="5" fill="#EEF2FF" stroke="#C7D2FE" strokeWidth="0.5" rx="2.5" />
+        <rect x="215" y="98" width="50" height="4" fill="#B0B8C8" rx="1" />
+        <rect x="215" y="105" width="36" height="3" fill="#CDD2DB" rx="1" opacity="0.7" />
+        <rect x="215" y="111" width="46" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
+        {/* Second row cards (partial) */}
+        <rect x="74" y="130" width="62" height="34" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="74" y="130" width="62" height="18" fill="url(#def-img2)" rx="4" />
+        <rect x="142" y="130" width="62" height="34" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="142" y="130" width="62" height="18" fill="url(#def-img1)" rx="4" />
+        <rect x="210" y="130" width="62" height="34" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="210" y="130" width="62" height="18" fill="url(#def-img2)" rx="4" />
         {/* Footer */}
-        <rect x="0" y="148" width="240" height="12" fill="#1A4FA0" rx="2" />
+        <rect x="2" y="166" width="276" height="14" fill="#1A4FA0" opacity="0.9" rx="4" />
+        <rect x="100" y="170" width="80" height="3" fill="white" rx="1" opacity="0.3" />
       </svg>
     ),
   },
@@ -50,37 +101,72 @@ const TEMPLATE_OPTIONS = [
     name: 'Portal',
     description: 'Estilo portal de notícias com hero destacado e grade editorial',
     preview: (
-      <svg viewBox="0 0 240 160" className="w-full" xmlns="http://www.w3.org/2000/svg">
-        {/* Header row 1 */}
-        <rect x="0" y="0" width="240" height="18" fill="#CC0000" rx="4" />
-        <rect x="8" y="5" width="60" height="8" fill="white" rx="2" />
-        <rect x="160" y="5" width="72" height="8" fill="white" opacity="0.5" rx="2" />
-        {/* Header row 2 - category nav */}
-        <rect x="0" y="18" width="240" height="12" fill="#AA0000" />
-        <rect x="8" y="21" width="20" height="5" fill="white" opacity="0.7" rx="1" />
-        <rect x="34" y="21" width="24" height="5" fill="white" opacity="0.5" rx="1" />
-        <rect x="64" y="21" width="28" height="5" fill="white" opacity="0.5" rx="1" />
-        <rect x="98" y="21" width="20" height="5" fill="white" opacity="0.5" rx="1" />
-        {/* Hero */}
-        <rect x="0" y="30" width="240" height="52" fill="#555" rx="3" />
-        <rect x="0" y="58" width="240" height="24" fill="black" opacity="0.5" />
-        <rect x="8" y="56" width="40" height="5" fill="#FF6600" rx="1" />
-        <rect x="8" y="64" width="180" height="7" fill="white" rx="2" />
-        <rect x="8" y="74" width="120" height="4" fill="white" opacity="0.6" rx="1" />
-        {/* Editorial grid */}
-        <rect x="0" y="86" width="152" height="62" fill="white" rx="2" />
-        <rect x="0" y="86" width="152" height="3" fill="#FF6600" rx="2" />
-        <rect x="0" y="86" width="152" height="28" fill="#e5e7eb" rx="2" />
-        <rect x="4" y="118" width="144" height="7" fill="#d1d5db" rx="1" />
-        <rect x="4" y="128" width="100" height="5" fill="#e5e7eb" rx="1" />
-        <rect x="156" y="86" width="84" height="28" fill="white" rx="2" />
-        <rect x="156" y="86" width="84" height="3" fill="#FF6600" />
-        <rect x="160" y="92" width="76" height="5" fill="#d1d5db" rx="1" />
-        <rect x="156" y="118" width="84" height="28" fill="white" rx="2" />
-        <rect x="156" y="118" width="84" height="3" fill="#FF6600" />
-        <rect x="160" y="124" width="76" height="5" fill="#d1d5db" rx="1" />
+      <svg viewBox="0 0 280 180" className="w-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="por-hero" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#4A5568" />
+            <stop offset="100%" stopColor="#2D3748" />
+          </linearGradient>
+          <linearGradient id="por-overlay" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="transparent" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0.7" />
+          </linearGradient>
+          <linearGradient id="por-img" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#DDE2EA" />
+            <stop offset="100%" stopColor="#C5CAD4" />
+          </linearGradient>
+        </defs>
+        {/* Browser chrome */}
+        <rect x="0" y="0" width="280" height="180" fill="#E4E7EC" rx="8" />
+        <rect x="2" y="2" width="276" height="176" fill="#F8F9FB" rx="7" />
+        <rect x="2" y="2" width="276" height="16" fill="#ECEEF2" rx="7" />
+        <circle cx="11" cy="10" r="3" fill="#FC5F57" />
+        <circle cx="20" cy="10" r="3" fill="#FEBC2E" />
+        <circle cx="29" cy="10" r="3" fill="#28C840" />
+        <rect x="60" y="6" width="130" height="8" fill="white" rx="3" opacity="0.8" />
+        {/* Primary header */}
+        <rect x="2" y="18" width="276" height="18" fill="#CC0000" />
+        <rect x="12" y="23" width="40" height="6" fill="white" rx="2" opacity="0.95" />
+        <rect x="180" y="24" width="20" height="4" fill="white" rx="1" opacity="0.4" />
+        <rect x="206" y="24" width="16" height="4" fill="white" rx="1" opacity="0.4" />
+        <rect x="228" y="24" width="20" height="4" fill="white" rx="1" opacity="0.4" />
+        {/* Secondary nav */}
+        <rect x="2" y="36" width="276" height="10" fill="#AA0000" />
+        <rect x="12" y="39" width="16" height="3.5" fill="white" rx="1" opacity="0.85" />
+        <rect x="34" y="39" width="22" height="3.5" fill="white" rx="1" opacity="0.55" />
+        <rect x="62" y="39" width="18" height="3.5" fill="white" rx="1" opacity="0.55" />
+        <rect x="86" y="39" width="24" height="3.5" fill="white" rx="1" opacity="0.55" />
+        <rect x="116" y="39" width="16" height="3.5" fill="white" rx="1" opacity="0.55" />
+        {/* Hero image */}
+        <rect x="8" y="50" width="264" height="56" fill="url(#por-hero)" rx="4" />
+        <rect x="8" y="78" width="264" height="28" fill="url(#por-overlay)" rx="4" />
+        {/* Category pill on hero */}
+        <rect x="16" y="72" width="30" height="7" fill="#CC0000" rx="3.5" />
+        {/* Hero headline */}
+        <rect x="16" y="82" width="180" height="6" fill="white" rx="2" opacity="0.95" />
+        <rect x="16" y="91" width="130" height="4" fill="white" rx="1" opacity="0.6" />
+        <rect x="16" y="97" width="100" height="3" fill="white" rx="1" opacity="0.4" />
+        {/* Editorial grid — large left + 2 right stacked */}
+        {/* Large left */}
+        <rect x="8" y="112" width="158" height="58" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="8" y="112" width="158" height="32" fill="url(#por-img)" rx="4" />
+        <rect x="14" y="148" width="26" height="5" fill="#FFF0F0" stroke="#FCC" strokeWidth="0.5" rx="2.5" />
+        <rect x="14" y="156" width="140" height="4" fill="#B0B8C8" rx="1" />
+        <rect x="14" y="163" width="100" height="3" fill="#CDD2DB" rx="1" opacity="0.6" />
+        {/* Right stacked card 1 */}
+        <rect x="172" y="112" width="100" height="26" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="172" y="112" width="36" height="26" fill="url(#por-img)" rx="4" />
+        <rect x="214" y="116" width="52" height="4" fill="#B0B8C8" rx="1" />
+        <rect x="214" y="123" width="38" height="3" fill="#CDD2DB" rx="1" opacity="0.6" />
+        <rect x="214" y="129" width="44" height="3" fill="#CDD2DB" rx="1" opacity="0.4" />
+        {/* Right stacked card 2 */}
+        <rect x="172" y="144" width="100" height="26" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="172" y="144" width="36" height="26" fill="url(#por-img)" rx="4" />
+        <rect x="214" y="148" width="52" height="4" fill="#B0B8C8" rx="1" />
+        <rect x="214" y="155" width="38" height="3" fill="#CDD2DB" rx="1" opacity="0.6" />
+        <rect x="214" y="161" width="44" height="3" fill="#CDD2DB" rx="1" opacity="0.4" />
         {/* Footer */}
-        <rect x="0" y="150" width="240" height="10" fill="#CC0000" rx="2" />
+        <rect x="2" y="172" width="276" height="6" fill="#CC0000" opacity="0.85" rx="3" />
       </svg>
     ),
   },
@@ -89,44 +175,75 @@ const TEMPLATE_OPTIONS = [
     name: 'Business',
     description: 'Estilo magazine corporativo com destaque, grid rico e newsletter',
     preview: (
-      <svg viewBox="0 0 240 160" className="w-full" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 280 180" className="w-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="biz-hero" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#BFC6D3" />
+            <stop offset="100%" stopColor="#A8B2C2" />
+          </linearGradient>
+          <linearGradient id="biz-overlay" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="transparent" />
+            <stop offset="100%" stopColor="#0D1B4B" stopOpacity="0.75" />
+          </linearGradient>
+          <linearGradient id="biz-img" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#DDE2EA" />
+            <stop offset="100%" stopColor="#C8CDD7" />
+          </linearGradient>
+        </defs>
+        {/* Browser chrome */}
+        <rect x="0" y="0" width="280" height="180" fill="#E4E7EC" rx="8" />
+        <rect x="2" y="2" width="276" height="176" fill="#F8F9FB" rx="7" />
+        <rect x="2" y="2" width="276" height="16" fill="#ECEEF2" rx="7" />
+        <circle cx="11" cy="10" r="3" fill="#FC5F57" />
+        <circle cx="20" cy="10" r="3" fill="#FEBC2E" />
+        <circle cx="29" cy="10" r="3" fill="#28C840" />
+        <rect x="60" y="6" width="130" height="8" fill="white" rx="3" opacity="0.8" />
         {/* White header */}
-        <rect x="0" y="0" width="240" height="22" fill="white" rx="2" />
-        <rect x="0" y="21" width="240" height="1" fill="#e5e7eb" />
-        <rect x="8" y="7" width="48" height="8" fill="#1a1a2e" rx="2" />
-        <rect x="100" y="9" width="18" height="4" fill="#9ca3af" rx="1" />
-        <rect x="124" y="9" width="18" height="4" fill="#9ca3af" rx="1" />
-        <rect x="148" y="9" width="18" height="4" fill="#9ca3af" rx="1" />
-        <rect x="192" y="7" width="40" height="8" fill="#f3f4f6" rx="3" />
-        {/* Featured: large left */}
-        <rect x="0" y="26" width="144" height="72" fill="#d1d5db" rx="2" />
-        <rect x="0" y="74" width="144" height="24" fill="black" opacity="0.5" rx="2" />
-        <rect x="4" y="66" width="28" height="5" fill="#FF6B35" rx="1" />
-        <rect x="4" y="74" width="134" height="6" fill="white" rx="1" />
-        <rect x="4" y="83" width="90" height="4" fill="white" opacity="0.6" rx="1" />
-        {/* Featured: 2 small right */}
-        <rect x="148" y="26" width="92" height="33" fill="white" rx="2" />
-        <rect x="148" y="26" width="30" height="33" fill="#e5e7eb" rx="2" />
-        <rect x="182" y="31" width="54" height="5" fill="#d1d5db" rx="1" />
-        <rect x="182" y="40" width="40" height="4" fill="#e5e7eb" rx="1" />
-        <rect x="148" y="63" width="92" height="33" fill="white" rx="2" />
-        <rect x="148" y="63" width="30" height="33" fill="#e5e7eb" rx="2" />
-        <rect x="182" y="68" width="54" height="5" fill="#d1d5db" rx="1" />
-        <rect x="182" y="77" width="40" height="4" fill="#e5e7eb" rx="1" />
+        <rect x="2" y="18" width="276" height="20" fill="white" />
+        <rect x="2" y="37" width="276" height="0.5" fill="#E2E5EA" />
+        <rect x="12" y="23" width="38" height="7" fill="#0D1B4B" rx="2" opacity="0.9" />
+        <rect x="90" y="25" width="16" height="3.5" fill="#9CA3AF" rx="1" />
+        <rect x="112" y="25" width="18" height="3.5" fill="#9CA3AF" rx="1" />
+        <rect x="136" y="25" width="16" height="3.5" fill="#9CA3AF" rx="1" />
+        <rect x="158" y="25" width="20" height="3.5" fill="#9CA3AF" rx="1" />
+        <rect x="234" y="23" width="36" height="8" fill="#FF6B35" rx="4" opacity="0.9" />
+        {/* Featured large left */}
+        <rect x="8" y="42" width="150" height="78" fill="url(#biz-hero)" rx="4" />
+        <rect x="8" y="90" width="150" height="30" fill="url(#biz-overlay)" rx="4" />
+        <rect x="14" y="86" width="32" height="7" fill="#FF6B35" rx="3.5" />
+        <rect x="14" y="96" width="136" height="5" fill="white" rx="2" opacity="0.95" />
+        <rect x="14" y="104" width="100" height="3.5" fill="white" rx="1" opacity="0.65" />
+        <rect x="14" y="110" width="80" height="3" fill="white" rx="1" opacity="0.4" />
+        {/* Right: 2 side articles */}
+        <rect x="164" y="42" width="108" height="36" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="164" y="42" width="36" height="36" fill="url(#biz-img)" rx="4" />
+        <rect x="206" y="48" width="58" height="4" fill="#B0B8C8" rx="1" />
+        <rect x="206" y="55" width="44" height="3" fill="#CDD2DB" rx="1" opacity="0.6" />
+        <rect x="206" y="61" width="50" height="3" fill="#CDD2DB" rx="1" opacity="0.4" />
+        <rect x="206" y="69" width="28" height="5" fill="#FFF3EE" stroke="#FECBA6" strokeWidth="0.5" rx="2.5" />
+        <rect x="164" y="84" width="108" height="36" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="164" y="84" width="36" height="36" fill="url(#biz-img)" rx="4" />
+        <rect x="206" y="90" width="58" height="4" fill="#B0B8C8" rx="1" />
+        <rect x="206" y="97" width="44" height="3" fill="#CDD2DB" rx="1" opacity="0.6" />
+        <rect x="206" y="103" width="50" height="3" fill="#CDD2DB" rx="1" opacity="0.4" />
+        <rect x="206" y="111" width="22" height="5" fill="#FFF3EE" stroke="#FECBA6" strokeWidth="0.5" rx="2.5" />
         {/* 3-col grid */}
-        <rect x="0" y="102" width="73" height="42" fill="white" rx="2" />
-        <rect x="0" y="102" width="73" height="22" fill="#e5e7eb" rx="2" />
-        <rect x="2" y="128" width="50" height="4" fill="#d1d5db" rx="1" />
-        <rect x="83" y="102" width="73" height="42" fill="white" rx="2" />
-        <rect x="83" y="102" width="73" height="22" fill="#e5e7eb" rx="2" />
-        <rect x="85" y="128" width="50" height="4" fill="#d1d5db" rx="1" />
-        <rect x="166" y="102" width="74" height="42" fill="white" rx="2" />
-        <rect x="166" y="102" width="74" height="22" fill="#e5e7eb" rx="2" />
-        <rect x="168" y="128" width="50" height="4" fill="#d1d5db" rx="1" />
-        {/* Newsletter banner */}
-        <rect x="0" y="148" width="240" height="12" fill="#0D1B4B" rx="2" />
-        <rect x="70" y="151" width="50" height="4" fill="white" opacity="0.8" rx="1" />
-        <rect x="132" y="150" width="36" height="6" fill="#FF6B35" rx="3" />
+        <rect x="8" y="126" width="82" height="40" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="8" y="126" width="82" height="22" fill="url(#biz-img)" rx="4" />
+        <rect x="12" y="152" width="60" height="4" fill="#B0B8C8" rx="1" />
+        <rect x="12" y="158" width="44" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
+        <rect x="99" y="126" width="82" height="40" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="99" y="126" width="82" height="22" fill="url(#biz-img)" rx="4" />
+        <rect x="103" y="152" width="60" height="4" fill="#B0B8C8" rx="1" />
+        <rect x="103" y="158" width="44" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
+        <rect x="190" y="126" width="82" height="40" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="190" y="126" width="82" height="22" fill="url(#biz-img)" rx="4" />
+        <rect x="194" y="152" width="60" height="4" fill="#B0B8C8" rx="1" />
+        <rect x="194" y="158" width="44" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
+        {/* Newsletter strip */}
+        <rect x="2" y="168" width="276" height="10" fill="#0D1B4B" rx="4" />
+        <rect x="80" y="171" width="40" height="3" fill="white" rx="1" opacity="0.5" />
+        <rect x="130" y="170" width="32" height="6" fill="#FF6B35" rx="3" opacity="0.9" />
       </svg>
     ),
   },
@@ -135,45 +252,78 @@ const TEMPLATE_OPTIONS = [
     name: 'Tech',
     description: 'Estilo editorial tech com header escuro, hero em destaque e seções por categoria',
     preview: (
-      <svg viewBox="0 0 240 160" className="w-full" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 280 180" className="w-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="tech-hero" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#2A2A2A" />
+            <stop offset="100%" stopColor="#1A1A1A" />
+          </linearGradient>
+          <linearGradient id="tech-overlay" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="transparent" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0.75" />
+          </linearGradient>
+          <linearGradient id="tech-img" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#D1D5DB" />
+            <stop offset="100%" stopColor="#B8BDC6" />
+          </linearGradient>
+          <linearGradient id="tech-bg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#F8F9FB" />
+            <stop offset="100%" stopColor="#F2F4F7" />
+          </linearGradient>
+        </defs>
+        {/* Browser chrome */}
+        <rect x="0" y="0" width="280" height="180" fill="#E4E7EC" rx="8" />
+        <rect x="2" y="2" width="276" height="176" fill="url(#tech-bg)" rx="7" />
+        <rect x="2" y="2" width="276" height="16" fill="#ECEEF2" rx="7" />
+        <circle cx="11" cy="10" r="3" fill="#FC5F57" />
+        <circle cx="20" cy="10" r="3" fill="#FEBC2E" />
+        <circle cx="29" cy="10" r="3" fill="#28C840" />
+        <rect x="60" y="6" width="130" height="8" fill="white" rx="3" opacity="0.8" />
         {/* Dark header */}
-        <rect x="0" y="0" width="240" height="20" fill="#111111" rx="3" />
-        <rect x="8" y="6" width="44" height="8" fill="white" rx="2" />
-        <rect x="64" y="8" width="16" height="4" fill="white" opacity="0.5" rx="1" />
-        <rect x="86" y="8" width="20" height="4" fill="white" opacity="0.5" rx="1" />
-        <rect x="112" y="8" width="18" height="4" fill="white" opacity="0.5" rx="1" />
-        <rect x="186" y="6" width="46" height="8" fill="white" opacity="0.15" rx="3" />
-        {/* Hero: large featured left */}
-        <rect x="0" y="24" width="155" height="72" fill="#555" rx="2" />
-        <rect x="0" y="72" width="155" height="24" fill="black" opacity="0.55" rx="2" />
-        <rect x="6" y="66" width="30" height="5" fill="#00B140" rx="1" />
-        <rect x="6" y="74" width="142" height="7" fill="white" rx="2" />
-        <rect x="6" y="84" width="80" height="4" fill="white" opacity="0.5" rx="1" />
-        {/* Hero: 2 secondary right */}
-        <rect x="159" y="24" width="81" height="33" fill="white" rx="2" />
-        <rect x="159" y="24" width="24" height="33" fill="#e5e7eb" rx="2" />
-        <rect x="187" y="29" width="50" height="4" fill="#d1d5db" rx="1" />
-        <rect x="187" y="36" width="36" height="3" fill="#e5e7eb" rx="1" />
-        <rect x="159" y="61" width="81" height="33" fill="white" rx="2" />
-        <rect x="159" y="61" width="24" height="33" fill="#e5e7eb" rx="2" />
-        <rect x="187" y="66" width="50" height="4" fill="#d1d5db" rx="1" />
-        <rect x="187" y="73" width="36" height="3" fill="#e5e7eb" rx="1" />
+        <rect x="2" y="18" width="276" height="20" fill="#111111" />
+        <rect x="12" y="23" width="36" height="7" fill="white" rx="2" opacity="0.9" />
+        <rect x="60" y="25" width="14" height="3.5" fill="white" rx="1" opacity="0.45" />
+        <rect x="80" y="25" width="18" height="3.5" fill="white" rx="1" opacity="0.45" />
+        <rect x="104" y="25" width="16" height="3.5" fill="white" rx="1" opacity="0.45" />
+        <rect x="126" y="25" width="20" height="3.5" fill="white" rx="1" opacity="0.45" />
+        <rect x="238" y="23" width="30" height="7" fill="#00B140" rx="3.5" opacity="0.9" />
+        {/* Hero section: large left + 2 right */}
+        {/* Large hero */}
+        <rect x="8" y="43" width="168" height="78" fill="url(#tech-hero)" rx="4" />
+        <rect x="8" y="95" width="168" height="26" fill="url(#tech-overlay)" rx="4" />
+        <rect x="14" y="88" width="34" height="7" fill="#00B140" rx="3.5" opacity="0.9" />
+        <rect x="14" y="98" width="154" height="5" fill="white" rx="2" opacity="0.95" />
+        <rect x="14" y="106" width="110" height="3.5" fill="white" rx="1" opacity="0.6" />
+        <rect x="14" y="112" width="80" height="3" fill="white" rx="1" opacity="0.35" />
+        {/* Secondary cards right */}
+        <rect x="182" y="43" width="90" height="36" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="182" y="43" width="30" height="36" fill="url(#tech-img)" rx="4" />
+        <rect x="218" y="49" width="48" height="4" fill="#B0B8C8" rx="1" />
+        <rect x="218" y="56" width="36" height="3" fill="#CDD2DB" rx="1" opacity="0.6" />
+        <rect x="218" y="63" width="42" height="3" fill="#CDD2DB" rx="1" opacity="0.4" />
+        <rect x="218" y="70" width="22" height="5" fill="#E8FFF0" stroke="#A3E9B5" strokeWidth="0.5" rx="2.5" />
+        <rect x="182" y="85" width="90" height="36" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="182" y="85" width="30" height="36" fill="url(#tech-img)" rx="4" />
+        <rect x="218" y="91" width="48" height="4" fill="#B0B8C8" rx="1" />
+        <rect x="218" y="98" width="36" height="3" fill="#CDD2DB" rx="1" opacity="0.6" />
+        <rect x="218" y="105" width="42" height="3" fill="#CDD2DB" rx="1" opacity="0.4" />
+        <rect x="218" y="112" width="22" height="5" fill="#E8FFF0" stroke="#A3E9B5" strokeWidth="0.5" rx="2.5" />
         {/* Category section heading */}
-        <rect x="0" y="101" width="3" height="7" fill="#00B140" rx="1" />
-        <rect x="7" y="103" width="40" height="4" fill="#1a1a2e" rx="1" />
-        <rect x="186" y="102" width="20" height="5" fill="#00B140" opacity="0.5" rx="1" />
-        {/* 3-col cards */}
-        <rect x="0" y="112" width="73" height="38" fill="white" rx="2" />
-        <rect x="0" y="112" width="73" height="20" fill="#e5e7eb" rx="2" />
-        <rect x="2" y="135" width="50" height="4" fill="#d1d5db" rx="1" />
-        <rect x="83" y="112" width="73" height="38" fill="white" rx="2" />
-        <rect x="83" y="112" width="73" height="20" fill="#e5e7eb" rx="2" />
-        <rect x="85" y="135" width="50" height="4" fill="#d1d5db" rx="1" />
-        <rect x="166" y="112" width="74" height="38" fill="white" rx="2" />
-        <rect x="166" y="112" width="74" height="20" fill="#e5e7eb" rx="2" />
-        <rect x="168" y="135" width="50" height="4" fill="#d1d5db" rx="1" />
+        <rect x="8" y="128" width="4" height="8" fill="#00B140" rx="2" />
+        <rect x="16" y="130" width="44" height="4" fill="#1A1A1A" rx="1" opacity="0.8" />
+        <rect x="240" y="129" width="32" height="6" fill="#E8FFF0" stroke="#A3E9B5" strokeWidth="0.5" rx="3" />
+        {/* 3-col cards row */}
+        <rect x="8" y="140" width="82" height="32" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="8" y="140" width="82" height="18" fill="url(#tech-img)" rx="4" />
+        <rect x="12" y="162" width="54" height="3.5" fill="#B0B8C8" rx="1" />
+        <rect x="99" y="140" width="82" height="32" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="99" y="140" width="82" height="18" fill="url(#tech-img)" rx="4" />
+        <rect x="103" y="162" width="54" height="3.5" fill="#B0B8C8" rx="1" />
+        <rect x="190" y="140" width="82" height="32" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        <rect x="190" y="140" width="82" height="18" fill="url(#tech-img)" rx="4" />
+        <rect x="194" y="162" width="54" height="3.5" fill="#B0B8C8" rx="1" />
         {/* Footer */}
-        <rect x="0" y="152" width="240" height="8" fill="#111111" rx="2" />
+        <rect x="2" y="174" width="276" height="4" fill="#111111" rx="2" />
       </svg>
     ),
   },
@@ -182,69 +332,102 @@ const TEMPLATE_OPTIONS = [
     name: 'News',
     description: 'Estilo portal de notícias com seções por categoria e sidebar de destaques',
     preview: (
-      <svg viewBox="0 0 240 160" className="w-full" xmlns="http://www.w3.org/2000/svg">
-        {/* Header row 1: white */}
-        <rect x="0" y="0" width="240" height="16" fill="white" rx="3" />
-        <rect x="0" y="15" width="240" height="1" fill="#e5e7eb" />
-        <rect x="8" y="4" width="44" height="7" fill="#003580" rx="2" />
-        <rect x="180" y="3" width="52" height="9" fill="#f3f4f6" rx="3" />
-        {/* Header row 2: primary blue */}
-        <rect x="0" y="16" width="240" height="13" fill="#003580" />
-        <rect x="8" y="20" width="18" height="5" fill="white" opacity="0.9" rx="1" />
-        <rect x="32" y="20" width="24" height="5" fill="white" opacity="0.55" rx="1" />
-        <rect x="62" y="20" width="20" height="5" fill="white" opacity="0.55" rx="1" />
-        <rect x="88" y="20" width="28" height="5" fill="white" opacity="0.55" rx="1" />
+      <svg viewBox="0 0 280 180" className="w-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="news-img" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#DDE2EA" />
+            <stop offset="100%" stopColor="#C8CDD7" />
+          </linearGradient>
+          <linearGradient id="news-img2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#D5DAE3" />
+            <stop offset="100%" stopColor="#C0C6D2" />
+          </linearGradient>
+        </defs>
+        {/* Browser chrome */}
+        <rect x="0" y="0" width="280" height="180" fill="#E4E7EC" rx="8" />
+        <rect x="2" y="2" width="276" height="176" fill="#F8F9FB" rx="7" />
+        <rect x="2" y="2" width="276" height="16" fill="#ECEEF2" rx="7" />
+        <circle cx="11" cy="10" r="3" fill="#FC5F57" />
+        <circle cx="20" cy="10" r="3" fill="#FEBC2E" />
+        <circle cx="29" cy="10" r="3" fill="#28C840" />
+        <rect x="60" y="6" width="130" height="8" fill="white" rx="3" opacity="0.8" />
+        {/* White topbar */}
+        <rect x="2" y="18" width="276" height="14" fill="white" />
+        <rect x="2" y="31" width="276" height="0.5" fill="#E2E5EA" />
+        <rect x="12" y="22" width="36" height="7" fill="#003580" rx="2" opacity="0.9" />
+        <rect x="210" y="21" width="56" height="9" fill="#F3F4F6" rx="3" stroke="#E2E5EA" strokeWidth="0.5" />
+        {/* Blue navbar */}
+        <rect x="2" y="32" width="276" height="12" fill="#003580" />
+        <rect x="12" y="36" width="16" height="3.5" fill="white" rx="1" opacity="0.9" />
+        <rect x="34" y="36" width="20" height="3.5" fill="white" rx="1" opacity="0.5" />
+        <rect x="60" y="36" width="18" height="3.5" fill="white" rx="1" opacity="0.5" />
+        <rect x="84" y="36" width="24" height="3.5" fill="white" rx="1" opacity="0.5" />
+        <rect x="114" y="36" width="16" height="3.5" fill="white" rx="1" opacity="0.5" />
+        <rect x="242" y="35" width="26" height="6" fill="#E8002D" rx="3" opacity="0.9" />
+        {/* Content area + sidebar */}
         {/* Section 1 heading */}
-        <rect x="0" y="34" width="3" height="8" fill="#003580" rx="1" />
-        <rect x="7" y="36" width="44" height="4" fill="#1a1a2e" rx="1" />
-        <rect x="138" y="35" width="22" height="5" fill="#003580" opacity="0.4" rx="1" />
-        {/* Section 1 cards row */}
-        <rect x="0" y="45" width="52" height="38" fill="white" rx="2" />
-        <rect x="0" y="45" width="52" height="22" fill="#e5e7eb" rx="2" />
-        <rect x="2" y="70" width="44" height="4" fill="#d1d5db" rx="1" />
-        <rect x="55" y="45" width="52" height="38" fill="white" rx="2" />
-        <rect x="55" y="45" width="52" height="22" fill="#e5e7eb" rx="2" />
-        <rect x="57" y="70" width="44" height="4" fill="#d1d5db" rx="1" />
-        <rect x="110" y="45" width="52" height="38" fill="white" rx="2" />
-        <rect x="110" y="45" width="52" height="22" fill="#e5e7eb" rx="2" />
-        <rect x="112" y="70" width="44" height="4" fill="#d1d5db" rx="1" />
+        <rect x="8" y="50" width="4" height="7" fill="#003580" rx="2" />
+        <rect x="16" y="52" width="40" height="4" fill="#1A1A2E" rx="1" opacity="0.75" />
+        <rect x="122" y="51" width="24" height="5" fill="#EEF3FF" stroke="#B8CAED" strokeWidth="0.5" rx="2.5" />
+        {/* Section 1 cards */}
+        <rect x="8" y="62" width="52" height="38" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="3" />
+        <rect x="8" y="62" width="52" height="22" fill="url(#news-img)" rx="3" />
+        <rect x="10" y="87" width="40" height="3.5" fill="#B0B8C8" rx="1" />
+        <rect x="10" y="93" width="30" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
+        <rect x="66" y="62" width="52" height="38" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="3" />
+        <rect x="66" y="62" width="52" height="22" fill="url(#news-img2)" rx="3" />
+        <rect x="68" y="87" width="40" height="3.5" fill="#B0B8C8" rx="1" />
+        <rect x="68" y="93" width="30" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
+        <rect x="124" y="62" width="52" height="38" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="3" />
+        <rect x="124" y="62" width="52" height="22" fill="url(#news-img)" rx="3" />
+        <rect x="126" y="87" width="40" height="3.5" fill="#B0B8C8" rx="1" />
+        <rect x="126" y="93" width="30" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
         {/* Section 2 heading */}
-        <rect x="0" y="88" width="3" height="8" fill="#003580" rx="1" />
-        <rect x="7" y="90" width="38" height="4" fill="#1a1a2e" rx="1" />
-        {/* Section 2 cards row */}
-        <rect x="0" y="98" width="52" height="34" fill="white" rx="2" />
-        <rect x="0" y="98" width="52" height="18" fill="#e5e7eb" rx="2" />
-        <rect x="2" y="120" width="44" height="4" fill="#d1d5db" rx="1" />
-        <rect x="55" y="98" width="52" height="34" fill="white" rx="2" />
-        <rect x="55" y="98" width="52" height="18" fill="#e5e7eb" rx="2" />
-        <rect x="57" y="120" width="44" height="4" fill="#d1d5db" rx="1" />
-        <rect x="110" y="98" width="52" height="34" fill="white" rx="2" />
-        <rect x="110" y="98" width="52" height="18" fill="#e5e7eb" rx="2" />
-        <rect x="112" y="120" width="44" height="4" fill="#d1d5db" rx="1" />
+        <rect x="8" y="106" width="4" height="7" fill="#E8002D" rx="2" />
+        <rect x="16" y="108" width="34" height="4" fill="#1A1A2E" rx="1" opacity="0.75" />
+        {/* Section 2 cards */}
+        <rect x="8" y="118" width="52" height="34" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="3" />
+        <rect x="8" y="118" width="52" height="18" fill="url(#news-img2)" rx="3" />
+        <rect x="10" y="139" width="40" height="3.5" fill="#B0B8C8" rx="1" />
+        <rect x="10" y="145" width="30" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
+        <rect x="66" y="118" width="52" height="34" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="3" />
+        <rect x="66" y="118" width="52" height="18" fill="url(#news-img)" rx="3" />
+        <rect x="68" y="139" width="40" height="3.5" fill="#B0B8C8" rx="1" />
+        <rect x="68" y="145" width="30" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
+        <rect x="124" y="118" width="52" height="34" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="3" />
+        <rect x="124" y="118" width="52" height="18" fill="url(#news-img2)" rx="3" />
+        <rect x="126" y="139" width="40" height="3.5" fill="#B0B8C8" rx="1" />
+        <rect x="126" y="145" width="30" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
         {/* Right sidebar */}
-        <rect x="167" y="30" width="73" height="104" fill="white" rx="3" />
-        <rect x="169" y="33" width="3" height="7" fill="#E8002D" rx="1" />
-        <rect x="176" y="35" width="36" height="4" fill="#1a1a2e" rx="1" />
-        <rect x="169" y="45" width="16" height="11" fill="#e5e7eb" rx="1" />
-        <rect x="169" y="45" width="7" height="7" fill="#003580" rx="3" />
-        <rect x="189" y="46" width="46" height="3" fill="#d1d5db" rx="1" />
-        <rect x="189" y="52" width="32" height="3" fill="#e5e7eb" rx="1" />
-        <rect x="169" y="61" width="16" height="11" fill="#e5e7eb" rx="1" />
-        <rect x="169" y="61" width="7" height="7" fill="#003580" rx="3" />
-        <rect x="189" y="62" width="46" height="3" fill="#d1d5db" rx="1" />
-        <rect x="189" y="68" width="32" height="3" fill="#e5e7eb" rx="1" />
-        <rect x="169" y="77" width="16" height="11" fill="#e5e7eb" rx="1" />
-        <rect x="169" y="77" width="7" height="7" fill="#003580" rx="3" />
-        <rect x="189" y="78" width="46" height="3" fill="#d1d5db" rx="1" />
-        <rect x="189" y="84" width="32" height="3" fill="#e5e7eb" rx="1" />
-        <rect x="169" y="96" width="3" height="7" fill="#E8002D" rx="1" />
-        <rect x="176" y="98" width="24" height="4" fill="#1a1a2e" rx="1" />
-        <rect x="169" y="107" width="28" height="8" fill="#f3f4f6" rx="4" />
-        <rect x="200" y="107" width="22" height="8" fill="#f3f4f6" rx="4" />
-        <rect x="169" y="119" width="32" height="8" fill="#f3f4f6" rx="4" />
-        <rect x="204" y="119" width="28" height="8" fill="#f3f4f6" rx="4" />
+        <rect x="184" y="48" width="88" height="106" fill="white" stroke="#E8EBF0" strokeWidth="0.5" rx="4" />
+        {/* Sidebar header */}
+        <rect x="184" y="48" width="88" height="14" fill="#003580" rx="4" />
+        <rect x="190" y="52" width="4" height="5" fill="#E8002D" rx="1" />
+        <rect x="198" y="53" width="32" height="3.5" fill="white" rx="1" opacity="0.9" />
+        {/* Sidebar items */}
+        <rect x="190" y="68" width="22" height="14" fill="url(#news-img)" rx="2" />
+        <rect x="216" y="70" width="50" height="3.5" fill="#B0B8C8" rx="1" />
+        <rect x="216" y="76" width="38" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
+        <rect x="190" y="68" width="2" height="14" fill="#003580" rx="1" />
+        <rect x="190" y="88" width="22" height="14" fill="url(#news-img2)" rx="2" />
+        <rect x="216" y="90" width="50" height="3.5" fill="#B0B8C8" rx="1" />
+        <rect x="216" y="96" width="38" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
+        <rect x="190" y="88" width="2" height="14" fill="#003580" rx="1" />
+        <rect x="190" y="108" width="22" height="14" fill="url(#news-img)" rx="2" />
+        <rect x="216" y="110" width="50" height="3.5" fill="#B0B8C8" rx="1" />
+        <rect x="216" y="116" width="38" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
+        <rect x="190" y="108" width="2" height="14" fill="#003580" rx="1" />
+        {/* Sidebar tag section */}
+        <rect x="188" y="128" width="80" height="0.5" fill="#E8EBF0" />
+        <rect x="190" y="132" width="30" height="3.5" fill="#B0B8C8" rx="1" opacity="0.7" />
+        <rect x="190" y="139" width="24" height="8" fill="#EEF3FF" stroke="#B8CAED" strokeWidth="0.5" rx="4" />
+        <rect x="218" y="139" width="18" height="8" fill="#FFF0F2" stroke="#F9B8C2" strokeWidth="0.5" rx="4" />
+        <rect x="190" y="149" width="20" height="8" fill="#EEF3FF" stroke="#B8CAED" strokeWidth="0.5" rx="4" />
+        <rect x="214" y="149" width="26" height="8" fill="#FFF0F2" stroke="#F9B8C2" strokeWidth="0.5" rx="4" />
         {/* Footer */}
-        <rect x="0" y="150" width="240" height="10" fill="#003580" rx="2" />
+        <rect x="2" y="156" width="276" height="6" fill="#003580" opacity="0.9" rx="3" />
+        <rect x="2" y="162" width="276" height="16" fill="#F8F9FB" rx="3" />
+        <rect x="90" y="166" width="100" height="3" fill="#CDD2DB" rx="1" opacity="0.5" />
       </svg>
     ),
   },
