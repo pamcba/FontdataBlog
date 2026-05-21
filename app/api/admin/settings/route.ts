@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import { db } from '@/drizzle/db'
-import { siteSettings } from '@/drizzle/schema'
+import { client } from '@/drizzle/db'
 import { getSettings } from '@/lib/settings'
 import { eq } from 'drizzle-orm'
+import { db } from '@/drizzle/db'
+import { siteSettings } from '@/drizzle/schema'
 
 export const dynamic = 'force-dynamic'
 
@@ -58,12 +59,20 @@ const putSchema = z.object({
     .optional(),
 })
 
+async function upsertSetting(key: string, value: string) {
+  await client`
+    INSERT INTO site_settings (key, value, updated_at)
+    VALUES (${key}, ${value}, now())
+    ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()
+  `
+}
+
 export async function GET() {
   try {
     const settings = await getSettings()
     return NextResponse.json(settings)
   } catch (err) {
-    console.error('[settings GET] error:', err)
+    console.error('[settings GET] error:', err instanceof Error ? err.message : String(err))
     return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
   }
 }
@@ -74,7 +83,6 @@ export async function PUT(request: Request) {
     const parsed = putSchema.safeParse(body)
 
     if (!parsed.success) {
-      console.error('[settings PUT] validation error:', JSON.stringify(parsed.error.flatten()))
       return NextResponse.json(
         { error: 'Dados inválidos', details: parsed.error.flatten() },
         { status: 400 }
@@ -82,57 +90,34 @@ export async function PUT(request: Request) {
     }
 
     const { template, colors, company, ai, newsletter, telegram } = parsed.data
-    const now = new Date()
 
     if (template !== undefined) {
-      await db
-        .insert(siteSettings)
-        .values({ key: 'active_template', value: template, updated_at: now })
-        .onConflictDoUpdate({ target: siteSettings.key, set: { value: template, updated_at: now } })
+      await upsertSetting('active_template', template)
     }
 
     if (colors !== undefined) {
-      const colorsJson = JSON.stringify(colors)
-      await db
-        .insert(siteSettings)
-        .values({ key: 'theme_colors', value: colorsJson, updated_at: now })
-        .onConflictDoUpdate({ target: siteSettings.key, set: { value: colorsJson, updated_at: now } })
+      await upsertSetting('theme_colors', JSON.stringify(colors))
     }
 
     if (company !== undefined) {
       const current = await getSettings()
       const merged = { ...current.company, ...company }
-      const companyJson = JSON.stringify(merged)
-      await db
-        .insert(siteSettings)
-        .values({ key: 'company_info', value: companyJson, updated_at: now })
-        .onConflictDoUpdate({ target: siteSettings.key, set: { value: companyJson, updated_at: now } })
+      await upsertSetting('company_info', JSON.stringify(merged))
     }
 
     if (ai !== undefined) {
       if (ai.api_key !== undefined) {
-        await db
-          .insert(siteSettings)
-          .values({ key: 'ai_api_key', value: ai.api_key, updated_at: now })
-          .onConflictDoUpdate({ target: siteSettings.key, set: { value: ai.api_key, updated_at: now } })
+        await upsertSetting('ai_api_key', ai.api_key)
       }
       if (ai.models !== undefined) {
-        const modelsJson = JSON.stringify(ai.models)
-        await db
-          .insert(siteSettings)
-          .values({ key: 'ai_models', value: modelsJson, updated_at: now })
-          .onConflictDoUpdate({ target: siteSettings.key, set: { value: modelsJson, updated_at: now } })
+        await upsertSetting('ai_models', JSON.stringify(ai.models))
       }
     }
 
     if (newsletter !== undefined) {
       const current = await getSettings()
       const merged = { ...current.newsletter, ...newsletter }
-      const newsletterJson = JSON.stringify(merged)
-      await db
-        .insert(siteSettings)
-        .values({ key: 'newsletter_config', value: newsletterJson, updated_at: now })
-        .onConflictDoUpdate({ target: siteSettings.key, set: { value: newsletterJson, updated_at: now } })
+      await upsertSetting('newsletter_config', JSON.stringify(merged))
     }
 
     if (telegram !== undefined) {
@@ -145,25 +130,14 @@ export async function PUT(request: Request) {
         ? JSON.parse(rows[0].value)
         : { bot_token: '', allowed_chat_ids: '' }
       const merged = { ...existing, ...telegram }
-      const telegramJson = JSON.stringify(merged)
-      await db
-        .insert(siteSettings)
-        .values({ key: 'telegram_config', value: telegramJson, updated_at: now })
-        .onConflictDoUpdate({
-          target: siteSettings.key,
-          set: { value: telegramJson, updated_at: now },
-        })
+      await upsertSetting('telegram_config', JSON.stringify(merged))
     }
 
     const current = await getSettings()
     return NextResponse.json(current)
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
-    const code = (err as Record<string, unknown>)?.code
-    const stack = err instanceof Error ? err.stack?.slice(0, 300) : ''
-    console.error('SETTINGS_ERR_MSG=' + msg)
-    console.error('SETTINGS_ERR_CODE=' + code)
-    console.error('SETTINGS_ERR_STACK=' + stack)
+    console.error('[settings PUT] error:', msg)
     return NextResponse.json({ error: msg || 'Erro interno do servidor' }, { status: 500 })
   }
 }
