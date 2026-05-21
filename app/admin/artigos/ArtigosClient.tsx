@@ -5,8 +5,10 @@ import Link from 'next/link'
 import { Badge } from '@/components/ui/Badge'
 import NewArticleModal from './NewArticleModal'
 import type { Post } from '@/drizzle/schema'
+import type { ArticleGenerationConfig, ArticleVoiceTone, ArticleLanguage } from '@/lib/article-config'
+import { ARTICLE_CONFIG_DEFAULTS } from '@/lib/article-config'
 
-type SectionId = 'lista' | 'temas' | 'briefing' | 'automacao' | 'prompts'
+type SectionId = 'lista' | 'temas' | 'briefing' | 'automacao' | 'prompts' | 'configuracao'
 
 const SIDEBAR_ITEMS: { id: SectionId; label: string; icon: string }[] = [
   { id: 'lista', label: 'Lista de Artigos', icon: '📝' },
@@ -14,6 +16,7 @@ const SIDEBAR_ITEMS: { id: SectionId; label: string; icon: string }[] = [
   { id: 'briefing', label: 'Briefing', icon: '📋' },
   { id: 'automacao', label: 'Automação', icon: '🤖' },
   { id: 'prompts', label: 'Prompts de IA', icon: '✨' },
+  { id: 'configuracao', label: 'Configurações', icon: '⚙️' },
 ]
 
 export default function ArtigosClient() {
@@ -31,6 +34,8 @@ export default function ArtigosClient() {
         return <AutomacaoSection />
       case 'prompts':
         return <PromptsSection />
+      case 'configuracao':
+        return <ConfiguracaoArtigosSection />
     }
   }
 
@@ -1108,6 +1113,181 @@ function PromptsSection() {
           className="bg-brand-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-brand-primary-dark transition-colors disabled:opacity-50"
         >
           {saving ? 'Salvando...' : 'Salvar Prompts'}
+        </button>
+      </div>
+    </section>
+  )
+}
+
+function ConfiguracaoArtigosSection() {
+  const [config, setConfig] = useState<ArticleGenerationConfig>(ARTICLE_CONFIG_DEFAULTS)
+  const [saving, setSaving] = useState(false)
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
+
+  useEffect(() => {
+    fetch('/api/admin/article-config')
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((data: { config?: ArticleGenerationConfig }) => {
+        if (data.config) setConfig(data.config)
+      })
+      .catch(() => {})
+  }, [])
+
+  async function handleSave() {
+    setSaving(true)
+    setToast(null)
+    try {
+      const res = await fetch('/api/admin/article-config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'Erro ao salvar')
+      setConfig(data.config)
+      setToast({ type: 'success', msg: 'Configurações salvas com sucesso!' })
+    } catch (err) {
+      setToast({ type: 'error', msg: err instanceof Error ? err.message : 'Erro ao salvar' })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  function set<K extends keyof ArticleGenerationConfig>(key: K, value: ArticleGenerationConfig[K]) {
+    setConfig((prev) => ({ ...prev, [key]: value }))
+  }
+
+  return (
+    <section className="bg-white rounded-xl border border-gray-200 p-6">
+      <h2 className="text-lg font-semibold text-neutral-900 mb-1">Configurações de Geração</h2>
+      <p className="text-sm text-gray-500 mb-6">
+        Defina o padrão de todos os artigos gerados por IA — automação e geração manual. Essas configurações são injetadas automaticamente nos prompts.
+      </p>
+
+      {toast && (
+        <div className={`mb-5 px-4 py-3 rounded-lg text-sm ${
+          toast.type === 'success'
+            ? 'bg-green-50 text-green-800 border border-green-200'
+            : 'bg-red-50 text-red-800 border border-red-200'
+        }`}>
+          {toast.msg}
+        </div>
+      )}
+
+      <div className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tamanho mínimo do artigo</label>
+          <select
+            value={config.minWords}
+            onChange={(e) => set('minWords', Number(e.target.value))}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary bg-white"
+          >
+            <option value={600}>600 palavras</option>
+            <option value={800}>800 palavras</option>
+            <option value={1000}>1000 palavras</option>
+            <option value={1200}>1200 palavras</option>
+            <option value={1500}>1500 palavras</option>
+            <option value={2000}>2000 palavras</option>
+            <option value={2500}>2500 palavras</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tom de voz</label>
+          <select
+            value={config.voiceTone}
+            onChange={(e) => set('voiceTone', e.target.value as ArticleVoiceTone)}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary bg-white"
+          >
+            <option value="profissional">Profissional</option>
+            <option value="informal">Informal</option>
+            <option value="tecnico">Técnico</option>
+            <option value="jornalistico">Jornalístico</option>
+            <option value="descontraido">Descontraído</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Idioma</label>
+          <select
+            value={config.language}
+            onChange={(e) => set('language', e.target.value as ArticleLanguage)}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary bg-white"
+          >
+            <option value="pt-BR">Português (BR)</option>
+            <option value="en">Inglês</option>
+            <option value="es">Espanhol</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Criatividade (temperatura) — {config.creativity.toFixed(1)}
+          </label>
+          <p className="text-xs text-gray-500 mb-2">
+            Valores mais altos geram textos mais criativos e variados. Valores mais baixos geram textos mais previsíveis e conservadores.
+          </p>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-gray-400 w-16">Conservador</span>
+            <input
+              type="range"
+              min={0.1}
+              max={1.0}
+              step={0.1}
+              value={config.creativity}
+              onChange={(e) => set('creativity', Number(e.target.value))}
+              className="flex-1 accent-brand-primary"
+            />
+            <span className="text-xs text-gray-400 w-16 text-right">Criativo</span>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Elementos de formato</label>
+          <div className="space-y-2">
+            {[
+              { key: 'includeLists', label: 'Incluir listas (ul/ol)' },
+              { key: 'includeExamples', label: 'Incluir exemplos práticos' },
+              { key: 'includeQuotes', label: 'Incluir blockquotes / citações' },
+              { key: 'includeTables', label: 'Incluir tabelas' },
+            ].map(({ key, label }) => (
+              <label key={key} className="flex items-center gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={config[key as keyof ArticleGenerationConfig] as boolean}
+                  onChange={(e) => set(key as keyof ArticleGenerationConfig, e.target.checked as never)}
+                  className="rounded accent-brand-primary"
+                />
+                <span className="text-sm text-gray-700">{label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Instruções adicionais fixas <span className="font-normal text-gray-400">(opcional)</span>
+          </label>
+          <p className="text-xs text-gray-500 mb-2">
+            Essas instruções são adicionadas a todos os prompts de geração. Ex: &ldquo;Sempre termine com 3 perguntas para o leitor&rdquo;, &ldquo;Mencione o esporte sempre que possível&rdquo;.
+          </p>
+          <textarea
+            value={config.extraInstructions}
+            onChange={(e) => set('extraInstructions', e.target.value)}
+            rows={4}
+            placeholder="Ex: Sempre cite pelo menos uma estatística. Termine o artigo com uma chamada para ação relacionada ao esporte."
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary resize-y"
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-end mt-6 pt-5 border-t border-gray-100">
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="bg-brand-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-brand-primary-dark transition-colors disabled:opacity-50"
+        >
+          {saving ? 'Salvando...' : 'Salvar Configurações'}
         </button>
       </div>
     </section>
