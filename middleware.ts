@@ -3,9 +3,24 @@ import type { NextRequest } from 'next/server'
 import { verifyToken } from '@/lib/auth'
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  // Se banco não configurado, redirecionar admin para /setup
+  if (!process.env.DATABASE_URL) {
+    if (pathname.startsWith('/admin')) {
+      return NextResponse.redirect(new URL('/setup', request.url))
+    }
+    return NextResponse.next()
+  }
+
+  // Se já instalado, bloquear /setup
+  if (pathname === '/setup' || pathname.startsWith('/setup/')) {
+    return NextResponse.redirect(new URL('/admin/login', request.url))
+  }
+
   const token = request.cookies.get('auth_token')?.value
-  const isApiRoute = request.nextUrl.pathname.startsWith('/api/admin')
-  const isLoginPage = request.nextUrl.pathname === '/admin/login'
+  const isApiRoute = pathname.startsWith('/api/admin')
+  const isLoginPage = pathname === '/admin/login'
 
   if (isLoginPage) return NextResponse.next()
 
@@ -25,5 +40,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*', '/setup', '/setup/:path*'],
 }
