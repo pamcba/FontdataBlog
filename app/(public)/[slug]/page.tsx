@@ -3,16 +3,36 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/Badge'
 import { getAppUrl } from '@/lib/app-url'
+import { db } from '@/drizzle/db'
+import { posts, categories, tags, postCategories, postTags } from '@/drizzle/schema'
+import { eq, and } from 'drizzle-orm'
 
 async function getPost(slug: string) {
-  const res = await fetch(
-    `${getAppUrl()}/api/posts/${slug}`,
-    { cache: 'no-store' }
-  )
-  if (res.status === 404) return null
-  if (!res.ok) return null
-  const data = await res.json()
-  return data.post
+  const [post] = await db
+    .select()
+    .from(posts)
+    .where(and(eq(posts.slug, slug), eq(posts.status, 'published')))
+    .limit(1)
+
+  if (!post) return null
+
+  const postCats = await db
+    .select({ category: categories })
+    .from(postCategories)
+    .innerJoin(categories, eq(postCategories.category_id, categories.id))
+    .where(eq(postCategories.post_id, post.id))
+
+  const postTagsList = await db
+    .select({ tag: tags })
+    .from(postTags)
+    .innerJoin(tags, eq(postTags.tag_id, tags.id))
+    .where(eq(postTags.post_id, post.id))
+
+  return {
+    ...post,
+    categories: postCats.map((r) => r.category),
+    tags: postTagsList.map((r) => r.tag),
+  }
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
@@ -34,9 +54,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-function formatDate(date: string | null) {
+function formatDate(date: Date | null) {
   if (!date) return ''
-  return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }).format(new Date(date))
+  return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }).format(date)
 }
 
 export default async function PostPage({ params }: { params: { slug: string } }) {
