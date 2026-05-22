@@ -16,7 +16,7 @@ function getDb(): PostgresJsDatabase<typeof schema> {
     global._pgClient ??
     postgres(process.env.DATABASE_URL!, {
       ssl: { rejectUnauthorized: false },
-      max: 1,
+      max: 5,
       prepare: false,
       connect_timeout: 10,
       idle_timeout: 30,
