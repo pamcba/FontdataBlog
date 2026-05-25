@@ -27,7 +27,7 @@ interface Props {
 }
 
 type CompanyKey = keyof CompanyInfo
-type SectionId = 'blog' | 'empresa' | 'redes' | 'ia' | 'api' | 'telegram'
+type SectionId = 'blog' | 'empresa' | 'redes' | 'ia' | 'firecrawl' | 'api' | 'telegram'
 
 interface RemoteModel {
   id: string
@@ -52,6 +52,7 @@ const SIDEBAR_ITEMS: { id: SectionId; label: string; icon: string }[] = [
   { id: 'empresa', label: 'Dados da Empresa', icon: '🏢' },
   { id: 'redes', label: 'Redes Sociais', icon: '🌐' },
   { id: 'ia', label: 'IA (OpenRouter)', icon: '🤖' },
+  { id: 'firecrawl', label: 'Firecrawl', icon: '🔥' },
   { id: 'api', label: 'API', icon: '🔑' },
   { id: 'telegram', label: 'Telegram Bot', icon: '✈️' },
 ]
@@ -251,27 +252,30 @@ export function ConfiguracoesClient({ initial, initialAI, initialTelegram, initi
                   ))}
                 </div>
               </div>
-              <div className="border-t border-gray-100 pt-4 mt-4">
-                <h3 className="text-sm font-semibold text-gray-800 mb-1">Firecrawl</h3>
-                <p className="text-sm text-gray-500 mb-3">
-                  Integração opcional para busca e extração de conteúdo de alta qualidade nos agentes Pesquisador e Analista.
-                  Obtenha sua chave em{' '}
-                  <a href="https://www.firecrawl.dev" target="_blank" rel="noopener noreferrer" className="text-brand-primary underline">
-                    firecrawl.dev
-                  </a>
-                  . Quando configurada, a opção de ativar o Firecrawl aparece nas configurações de cada agente.
-                </p>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Chave de API do Firecrawl</label>
-                  <input
-                    type="password"
-                    value={firecrawl.api_key}
-                    onChange={(e) => handleFirecrawlKeyChange(e.target.value)}
-                    placeholder="fc-..."
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary"
-                  />
-                </div>
-              </div>
+            </div>
+          </section>
+        )
+      case 'firecrawl':
+        return (
+          <section className="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 className="text-lg font-semibold text-neutral-900 mb-1">Firecrawl</h2>
+            <p className="text-sm text-gray-500 mb-5">
+              Integração opcional para busca e extração de conteúdo de alta qualidade nos agentes Pesquisador e Analista.
+              Obtenha sua chave em{' '}
+              <a href="https://www.firecrawl.dev" target="_blank" rel="noopener noreferrer" className="text-brand-primary underline">
+                firecrawl.dev
+              </a>
+              . Quando configurada, a opção de ativar o Firecrawl aparece nas configurações de cada agente.
+            </p>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Chave de API</label>
+              <input
+                type="password"
+                value={firecrawl.api_key}
+                onChange={(e) => handleFirecrawlKeyChange(e.target.value)}
+                placeholder="fc-..."
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary"
+              />
             </div>
           </section>
         )
