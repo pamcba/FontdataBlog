@@ -63,6 +63,9 @@ export default function AgentsSection() {
   const [modelSearch, setModelSearch] = useState<Record<AgentId, string>>({} as Record<AgentId, string>)
   const [modelDropdownOpen, setModelDropdownOpen] = useState<AgentId | null>(null)
   const [toast, setToast] = useState<Toast | null>(null)
+  const [firecrawlConfigured, setFirecrawlConfigured] = useState(false)
+  const [agentsExtra, setAgentsExtra] = useState<Record<string, { use_firecrawl?: boolean }>>({})
+  const [savingExtra, setSavingExtra] = useState<AgentId | null>(null)
 
   // Pipeline runner state
   const [running, setRunning] = useState(false)
@@ -86,6 +89,14 @@ export default function AgentsSection() {
       .then((data: { id: string; name: string }[] | { models?: { id: string; name: string }[] }) => {
         const list = Array.isArray(data) ? data : (data.models ?? [])
         setModels(list)
+      })
+      .catch(() => {})
+
+    fetch('/api/admin/agents/extra')
+      .then((r) => r.json())
+      .then((data: { firecrawl_configured?: boolean; agents_extra?: Record<string, { use_firecrawl?: boolean }> }) => {
+        setFirecrawlConfigured(data.firecrawl_configured ?? false)
+        setAgentsExtra(data.agents_extra ?? {})
       })
       .catch(() => {})
   }, [])
@@ -119,6 +130,24 @@ export default function AgentsSection() {
       else setToast({ type: 'error', msg: 'Erro ao salvar' })
     } finally {
       setSaving(null)
+    }
+  }
+
+  async function toggleFirecrawl(id: AgentId, enabled: boolean) {
+    const updated = { ...agentsExtra, [id]: { ...(agentsExtra[id] ?? {}), use_firecrawl: enabled } }
+    setAgentsExtra(updated)
+    setSavingExtra(id)
+    try {
+      await fetch('/api/admin/agents/extra', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agents_extra: updated }),
+      })
+      setToast({ type: 'success', msg: `Firecrawl ${enabled ? 'ativado' : 'desativado'} para ${AGENT_LABELS[id]}` })
+    } catch {
+      setToast({ type: 'error', msg: 'Erro ao salvar' })
+    } finally {
+      setSavingExtra(null)
     }
   }
 
@@ -379,6 +408,36 @@ export default function AgentsSection() {
                       </div>
                     )}
                   </div>
+
+                  {/* Firecrawl toggle — researcher and analyst only */}
+                  {(cfg.id === 'researcher' || cfg.id === 'analyst') && firecrawlConfigured && (
+                    <div className="flex items-center justify-between p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                      <div>
+                        <p className="text-xs font-medium text-orange-900">
+                          Usar Firecrawl
+                        </p>
+                        <p className="text-xs text-orange-700 mt-0.5">
+                          {cfg.id === 'researcher'
+                            ? 'Busca real na web via Firecrawl em vez do Jina Search'
+                            : 'Extração de conteúdo via Firecrawl em vez do Jina Reader'}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        disabled={savingExtra === cfg.id}
+                        onClick={() => toggleFirecrawl(cfg.id, !(agentsExtra[cfg.id]?.use_firecrawl ?? false))}
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none disabled:opacity-50 ${
+                          agentsExtra[cfg.id]?.use_firecrawl ? 'bg-orange-500' : 'bg-gray-300'
+                        }`}
+                      >
+                        <span
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ${
+                            agentsExtra[cfg.id]?.use_firecrawl ? 'translate-x-5' : 'translate-x-0'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  )}
 
                   {/* Prompt editor */}
                   <div>

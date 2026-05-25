@@ -2,6 +2,7 @@
 import { callOpenRouter } from '@/lib/ai'
 import { getAgentConfig } from '@/lib/agent-configs'
 import { AgentContext, AgentResult } from '@/lib/agents/types'
+import { getFirecrawlApiKey, getAgentsExtra, firecrawlSearch } from '@/lib/firecrawl'
 
 function extractUrls(text: string): string[] {
   // Try JSON parse first (handles ```json blocks too)
@@ -53,13 +54,22 @@ export async function runResearcherAgent(
 ): Promise<AgentResult> {
   if (!ctx.headline) return { success: false, message: 'Headline não disponível', error: 'NO_HEADLINE' }
 
-  const config = await getAgentConfig('researcher')
+  const [config, agentsExtra, firecrawlKey] = await Promise.all([
+    getAgentConfig('researcher'),
+    getAgentsExtra(),
+    getFirecrawlApiKey(),
+  ])
+
+  const useFirecrawl = !!(agentsExtra['researcher']?.use_firecrawl && firecrawlKey)
 
   let suggestedUrls: string[] = []
   let searchSource = 'LLM'
   const isPerplexity = config.model.startsWith('perplexity/')
 
-  if (isPerplexity) {
+  if (useFirecrawl) {
+    suggestedUrls = await firecrawlSearch(ctx.headline, firecrawlKey!)
+    searchSource = 'Firecrawl'
+  } else if (isPerplexity) {
     // Perplexity/Sonar: built-in web search — citations come back in resp.citations
     const resp = await callOpenRouter(
       {

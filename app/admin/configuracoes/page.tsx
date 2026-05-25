@@ -1,6 +1,7 @@
 import { getSettings } from '@/lib/settings'
 import { getDefaultModels, getAIApiKey, getAIModelFromDB } from '@/lib/ai'
 import { getTelegramConfig } from '@/lib/telegram'
+import { getFirecrawlApiKey } from '@/lib/firecrawl'
 import { ConfiguracoesClient } from './ConfiguracoesClient'
 
 export default async function ConfiguracoesPage() {
@@ -14,6 +15,7 @@ export default async function ConfiguracoesPage() {
   }
 
   const telegramConfig = await getTelegramConfig()
+  const firecrawlApiKey = (await getFirecrawlApiKey()) ?? ''
 
   return (
     <ConfiguracoesClient
@@ -23,6 +25,7 @@ export default async function ConfiguracoesPage() {
         bot_token: telegramConfig?.bot_token ?? '',
         allowed_chat_ids: telegramConfig?.allowed_chat_ids ?? '',
       }}
+      initialFirecrawl={{ api_key: firecrawlApiKey }}
     />
   )
 }

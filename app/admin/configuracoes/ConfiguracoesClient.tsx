@@ -15,10 +15,15 @@ interface TelegramSettings {
   allowed_chat_ids: string
 }
 
+interface FirecrawlSettings {
+  api_key: string
+}
+
 interface Props {
   initial: CompanyInfo
   initialAI: AISettings
   initialTelegram: TelegramSettings
+  initialFirecrawl: FirecrawlSettings
 }
 
 type CompanyKey = keyof CompanyInfo
@@ -77,10 +82,11 @@ const SECTIONS: Record<string, { fields: { key: CompanyKey; label: string; type?
   },
 }
 
-export function ConfiguracoesClient({ initial, initialAI, initialTelegram }: Props) {
+export function ConfiguracoesClient({ initial, initialAI, initialTelegram, initialFirecrawl }: Props) {
   const [company, setCompany] = useState<CompanyInfo>(initial)
   const [ai, setAI] = useState<AISettings>(initialAI)
   const [telegram, setTelegram] = useState<TelegramSettings>(initialTelegram)
+  const [firecrawl, setFirecrawl] = useState<FirecrawlSettings>(initialFirecrawl)
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
   const [activeSection, setActiveSection] = useState<SectionId>('blog')
@@ -111,6 +117,10 @@ export function ConfiguracoesClient({ initial, initialAI, initialTelegram }: Pro
 
   function handleTelegramChange(key: keyof TelegramSettings, value: string) {
     setTelegram((prev) => ({ ...prev, [key]: value }))
+  }
+
+  function handleFirecrawlKeyChange(value: string) {
+    setFirecrawl((prev) => ({ ...prev, api_key: value }))
   }
 
   async function handleRegisterWebhook() {
@@ -150,7 +160,7 @@ export function ConfiguracoesClient({ initial, initialAI, initialTelegram }: Pro
       const res = await fetch('/api/admin/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ company, ai, telegram }),
+        body: JSON.stringify({ company, ai, telegram, firecrawl }),
       })
       if (!res.ok) {
         const data = await res.json()
@@ -239,6 +249,27 @@ export function ConfiguracoesClient({ initial, initialAI, initialTelegram }: Pro
                       />
                     </div>
                   ))}
+                </div>
+              </div>
+              <div className="border-t border-gray-100 pt-4 mt-4">
+                <h3 className="text-sm font-semibold text-gray-800 mb-1">Firecrawl</h3>
+                <p className="text-sm text-gray-500 mb-3">
+                  Integração opcional para busca e extração de conteúdo de alta qualidade nos agentes Pesquisador e Analista.
+                  Obtenha sua chave em{' '}
+                  <a href="https://www.firecrawl.dev" target="_blank" rel="noopener noreferrer" className="text-brand-primary underline">
+                    firecrawl.dev
+                  </a>
+                  . Quando configurada, a opção de ativar o Firecrawl aparece nas configurações de cada agente.
+                </p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Chave de API do Firecrawl</label>
+                  <input
+                    type="password"
+                    value={firecrawl.api_key}
+                    onChange={(e) => handleFirecrawlKeyChange(e.target.value)}
+                    placeholder="fc-..."
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                  />
                 </div>
               </div>
             </div>

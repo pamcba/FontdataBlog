@@ -2,21 +2,16 @@
 import { callOpenRouter } from '@/lib/ai'
 import { getAgentConfig } from '@/lib/agent-configs'
 import { AgentContext, AgentResult } from '@/lib/agents/types'
+import { getFirecrawlApiKey, getAgentsExtra, firecrawlScrape } from '@/lib/firecrawl'
 
-// Uses Jina AI Reader (free, no API key) to extract clean text from any URL
-async function extractTextFromUrl(url: string): Promise<string> {
+async function extractTextWithJina(url: string): Promise<string> {
   try {
-    const jinaUrl = `https://r.jina.ai/${url}`
-    const res = await fetch(jinaUrl, {
-      headers: {
-        Accept: 'text/plain',
-        'X-Return-Format': 'text',
-      },
+    const res = await fetch(`https://r.jina.ai/${url}`, {
+      headers: { Accept: 'text/plain', 'X-Return-Format': 'text' },
       signal: AbortSignal.timeout(15000),
     })
     if (!res.ok) return ''
-    const text = await res.text()
-    return text.slice(0, 6000)
+    return (await res.text()).slice(0, 6000)
   } catch {
     return ''
   }
@@ -34,11 +29,21 @@ export async function runAnalystAgent(
     }
   }
 
-  const config = await getAgentConfig('analyst')
+  const [config, agentsExtra, firecrawlKey] = await Promise.all([
+    getAgentConfig('analyst'),
+    getAgentsExtra(),
+    getFirecrawlApiKey(),
+  ])
+
+  const useFirecrawl = !!(agentsExtra['analyst']?.use_firecrawl && firecrawlKey)
+  const extractText = useFirecrawl
+    ? (url: string) => firecrawlScrape(url, firecrawlKey!)
+    : extractTextWithJina
+
   const summaries: { url: string; summary: string }[] = []
 
   for (const url of ctx.researchLinks.slice(0, 6)) {
-    const text = await extractTextFromUrl(url)
+    const text = await extractText(url)
     if (!text || text.length < 200) continue
 
     try {
@@ -62,17 +67,19 @@ export async function runAnalystAgent(
     } catch {}
   }
 
+  const extractor = useFirecrawl ? 'Firecrawl' : 'Jina'
+
   if (summaries.length === 0) {
     return {
       success: true,
-      message: 'Nenhuma fonte acessível via Jina, continuando sem resumos',
+      message: `Nenhuma fonte acessível via ${extractor}, continuando sem resumos`,
       data: { sourceSummaries: [] },
     }
   }
 
   return {
     success: true,
-    message: `${summaries.length} fontes analisadas`,
+    message: `${summaries.length} fontes analisadas (${extractor})`,
     data: { sourceSummaries: summaries },
   }
 }

@@ -56,6 +56,11 @@ const putSchema = z.object({
       allowed_chat_ids: z.string().max(500).optional(),
     })
     .optional(),
+  firecrawl: z
+    .object({
+      api_key: z.string().optional(),
+    })
+    .optional(),
   design_system: z
     .object({
       font_sans: z.string().max(200).optional(),
@@ -127,7 +132,7 @@ export async function PUT(request: Request) {
       )
     }
 
-    const { template, colors, company, ai, newsletter, telegram } = parsed.data
+    const { template, colors, company, ai, newsletter, telegram, firecrawl } = parsed.data
 
     if (template !== undefined) {
       await upsertSetting('active_template', template)
@@ -162,6 +167,10 @@ export async function PUT(request: Request) {
       const current = await getSettings()
       const merged = { ...current.design_system, ...parsed.data.design_system }
       await upsertSetting('design_system', JSON.stringify(merged))
+    }
+
+    if (firecrawl?.api_key !== undefined) {
+      await upsertSetting('firecrawl_api_key', firecrawl.api_key)
     }
 
     if (telegram !== undefined) {
