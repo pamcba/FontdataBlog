@@ -116,7 +116,9 @@ export function createPipelineStream(options: PipelineOptions): ReadableStream {
         // 3. Analyst
         if (aborted()) { send(makeEvent('pipeline_error', 'Pipeline interrompido pelo usuário')); controller.close(); return }
         send(makeEvent('agent_start', 'Analisando fontes...', 'analyst'))
-        const analystResult = await runAnalystAgent(ctx, apiKey)
+        const analystResult = await runAnalystAgent(ctx, apiKey, (msg) =>
+          send(makeEvent('log', msg, 'analyst'))
+        )
         Object.assign(ctx, analystResult.data ?? {})
         send(makeEvent('agent_done', analystResult.message, 'analyst', { summaries: ctx.sourceSummaries?.length }))
 

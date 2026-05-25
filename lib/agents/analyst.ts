@@ -19,7 +19,8 @@ async function extractTextWithJina(url: string): Promise<string> {
 
 export async function runAnalystAgent(
   ctx: AgentContext,
-  apiKey: string
+  apiKey: string,
+  onProgress?: (msg: string) => void
 ): Promise<AgentResult> {
   if (!ctx.researchLinks || ctx.researchLinks.length === 0) {
     return {
@@ -43,6 +44,7 @@ export async function runAnalystAgent(
   const summaries: { url: string; summary: string }[] = []
 
   for (const url of ctx.researchLinks.slice(0, 6)) {
+    onProgress?.(`Analisando: ${url}`)
     const text = await extractText(url)
     if (!text || text.length < 200) continue
 
