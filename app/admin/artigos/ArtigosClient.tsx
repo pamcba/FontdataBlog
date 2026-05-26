@@ -1,16 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, KeyboardEvent } from 'react'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
 import NewArticleModal from './NewArticleModal'
 import AgentsSection from './AgentsSection'
 import RSSSection from './RSSSection'
-import type { Post } from '@/drizzle/schema'
+import type { Post, Category, Tag } from '@/drizzle/schema'
 import type { ArticleGenerationConfig, ArticleVoiceTone, ArticleLanguage } from '@/lib/article-config-types'
 import { ARTICLE_CONFIG_DEFAULTS } from '@/lib/article-config-types'
 
-type SectionId = 'lista' | 'temas' | 'briefing' | 'automacao' | 'rss' | 'agentes' | 'configuracao'
+type SectionId = 'lista' | 'temas' | 'briefing' | 'automacao' | 'rss' | 'agentes' | 'categorias' | 'tags' | 'configuracao'
 
 const SIDEBAR_ITEMS: { id: SectionId; label: string; icon: string }[] = [
   { id: 'lista', label: 'Lista de Artigos', icon: '📝' },
@@ -19,6 +20,8 @@ const SIDEBAR_ITEMS: { id: SectionId; label: string; icon: string }[] = [
   { id: 'automacao', label: 'Automação', icon: '🤖' },
   { id: 'rss', label: 'RSS', icon: '📡' },
   { id: 'agentes', label: 'Agentes de IA', icon: '🧠' },
+  { id: 'categorias', label: 'Categorias', icon: '🗂️' },
+  { id: 'tags', label: 'Tags', icon: '🏷️' },
   { id: 'configuracao', label: 'Configurações', icon: '⚙️' },
 ]
 
@@ -39,6 +42,10 @@ export default function ArtigosClient() {
         return <RSSSection />
       case 'agentes':
         return <AgentsSection />
+      case 'categorias':
+        return <CategoriasSection />
+      case 'tags':
+        return <TagsSection />
       case 'configuracao':
         return <ConfiguracaoArtigosSection />
     }
@@ -1078,6 +1085,173 @@ function AutomacaoSection() {
         )}
       </div>
     </section>
+  )
+}
+
+function CategoriasSection() {
+  const [categories, setCategories] = useState<Category[]>([])
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
+  const [editing, setEditing] = useState<Category | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  async function fetchCategories() {
+    const res = await fetch('/api/admin/categories')
+    const data = await res.json()
+    setCategories(data.categories ?? [])
+  }
+
+  useEffect(() => { fetchCategories() }, [])
+
+  async function handleSave() {
+    setError('')
+    setLoading(true)
+    try {
+      const url = editing ? `/api/admin/categories/${editing.id}` : '/api/admin/categories'
+      const method = editing ? 'PUT' : 'POST'
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, description: description || undefined }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error ?? 'Erro ao salvar'); return }
+      setName(''); setDescription(''); setEditing(null)
+      await fetchCategories()
+    } catch { setError('Erro de conexão') }
+    finally { setLoading(false) }
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm('Excluir esta categoria?')) return
+    const res = await fetch(`/api/admin/categories/${id}`, { method: 'DELETE' })
+    const data = await res.json()
+    if (!res.ok) { alert(data.error); return }
+    await fetchCategories()
+  }
+
+  return (
+    <div>
+      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
+        <h2 className="font-medium text-neutral-900 mb-4">{editing ? 'Editar Categoria' : 'Nova Categoria'}</h2>
+        <div className="flex gap-3 items-end">
+          <div className="flex-1">
+            <label className="block text-sm text-gray-600 mb-1">Nome</label>
+            <input value={name} onChange={e => setName(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary" />
+          </div>
+          <div className="flex-1">
+            <label className="block text-sm text-gray-600 mb-1">Descrição (opcional)</label>
+            <input value={description} onChange={e => setDescription(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary" />
+          </div>
+          <Button onClick={handleSave} loading={loading}>{editing ? 'Salvar' : 'Adicionar'}</Button>
+          {editing && <Button variant="ghost" onClick={() => { setEditing(null); setName(''); setDescription('') }}>Cancelar</Button>}
+        </div>
+        {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+      </div>
+
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th className="text-left px-4 py-3 font-medium text-gray-600">Nome</th>
+              <th className="text-left px-4 py-3 font-medium text-gray-600">Slug</th>
+              <th className="text-left px-4 py-3 font-medium text-gray-600">Descrição</th>
+              <th className="px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {categories.map(cat => (
+              <tr key={cat.id} className="hover:bg-gray-50">
+                <td className="px-4 py-3 font-medium">{cat.name}</td>
+                <td className="px-4 py-3 text-gray-500 font-mono text-xs">{cat.slug}</td>
+                <td className="px-4 py-3 text-gray-500 truncate max-w-xs">{cat.description ?? '—'}</td>
+                <td className="px-4 py-3">
+                  <div className="flex gap-2 justify-end">
+                    <button onClick={() => { setEditing(cat); setName(cat.name); setDescription(cat.description ?? '') }} className="text-brand-primary hover:underline text-sm">Editar</button>
+                    <button onClick={() => handleDelete(cat.id)} className="text-red-600 hover:underline text-sm">Excluir</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+function TagsSection() {
+  const [tags, setTags] = useState<Tag[]>([])
+  const [input, setInput] = useState('')
+  const [error, setError] = useState('')
+
+  async function fetchTags() {
+    const res = await fetch('/api/admin/tags')
+    const data = await res.json()
+    setTags(data.tags ?? [])
+  }
+
+  useEffect(() => { fetchTags() }, [])
+
+  async function handleAdd() {
+    if (!input.trim()) return
+    setError('')
+    const res = await fetch('/api/admin/tags', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: input.trim() }),
+    })
+    const data = await res.json()
+    if (!res.ok) { setError(data.error ?? 'Erro ao criar tag'); return }
+    setInput('')
+    await fetchTags()
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm('Excluir esta tag?')) return
+    await fetch(`/api/admin/tags/${id}`, { method: 'DELETE' })
+    await fetchTags()
+  }
+
+  function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') { e.preventDefault(); handleAdd() }
+  }
+
+  return (
+    <div>
+      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
+        <div className="flex gap-3">
+          <input
+            value={input} onChange={e => setInput(e.target.value)} onKeyDown={onKeyDown}
+            placeholder="Nome da tag (Enter para adicionar)"
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary"
+          />
+          <button onClick={handleAdd} className="bg-brand-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-primary-dark transition-colors">
+            Adicionar
+          </button>
+        </div>
+        {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {tags.map(tag => (
+          <span key={tag.id} className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full text-sm">
+            {tag.name}
+            <button
+              onClick={() => handleDelete(tag.id)}
+              aria-label={`Excluir tag ${tag.name}`}
+              className="text-gray-400 hover:text-red-600 transition-colors ml-0.5"
+            >
+              ×
+            </button>
+          </span>
+        ))}
+        {tags.length === 0 && <p className="text-gray-400 text-sm">Nenhuma tag ainda. Adicione a primeira acima.</p>}
+      </div>
+    </div>
   )
 }
 
