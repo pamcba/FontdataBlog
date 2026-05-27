@@ -42,7 +42,29 @@ export async function runHeadlineAgent(
     }
 
     if (rows.length === 0) {
-      return { success: false, message: 'Nenhum tema pendente disponível', error: 'NO_THEME' }
+      // All themes used — reset cycle and try again
+      log?.('todos os temas foram usados, reiniciando ciclo...')
+      if (themeIds.length > 0) {
+        await db.update(articleThemes).set({ status: 'pending' }).where(inArray(articleThemes.id, themeIds))
+        rows = await db
+          .select()
+          .from(articleThemes)
+          .where(and(inArray(articleThemes.id, themeIds), eq(articleThemes.status, 'pending')))
+          .orderBy(asc(articleThemes.created_at))
+          .limit(1)
+      } else {
+        await db.update(articleThemes).set({ status: 'pending' })
+        rows = await db
+          .select()
+          .from(articleThemes)
+          .where(eq(articleThemes.status, 'pending'))
+          .orderBy(asc(articleThemes.created_at))
+          .limit(1)
+      }
+
+      if (rows.length === 0) {
+        return { success: false, message: 'Nenhum tema cadastrado. Adicione temas para gerar artigos.', error: 'NO_THEME' }
+      }
     }
 
     themeId = rows[0].id
