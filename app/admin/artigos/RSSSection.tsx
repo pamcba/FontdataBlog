@@ -78,6 +78,7 @@ export default function RSSSection() {
   const [loadingItems, setLoadingItems] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
   const [saving, setSaving] = useState(false)
+  const [processingItem, setProcessingItem] = useState<number | null>(null)
 
   function showToast(type: Toast['type'], msg: string) {
     setToast({ type, msg })
@@ -203,6 +204,26 @@ export default function RSSSection() {
       showToast('error', err instanceof Error ? err.message : 'Erro ao salvar')
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleProcessItem(item: RssItem) {
+    setProcessingItem(item.id)
+    try {
+      const res = await fetch(`/api/admin/rss/items/${item.id}/process`, { method: 'POST' })
+      const data = await res.json() as { ok: boolean; postId?: number; error?: string }
+      if (data.ok) {
+        showToast('success', data.postId ? `Artigo #${data.postId} gerado com sucesso` : 'Artigo gerado com sucesso')
+        if (selectedFeed) loadFeedItems(selectedFeed.id)
+        loadFeeds()
+      } else {
+        showToast('error', data.error ?? 'Erro ao gerar artigo')
+        if (selectedFeed) loadFeedItems(selectedFeed.id)
+      }
+    } catch {
+      showToast('error', 'Erro ao gerar artigo')
+    } finally {
+      setProcessingItem(null)
     }
   }
 
@@ -419,7 +440,7 @@ export default function RSSSection() {
                   ) : feedItems.length === 0 ? (
                     <div className="p-6 text-center text-sm text-gray-500">Nenhum item processado ainda.</div>
                   ) : feedItems.map((item) => (
-                    <div key={item.id} className="px-4 py-3 space-y-1">
+                    <div key={item.id} className="px-4 py-3 space-y-1.5">
                       <div className="flex items-center justify-between gap-2">
                         {statusBadge(item.status)}
                         <span className="text-xs text-gray-400">{formatDate(item.processed_at)}</span>
@@ -430,10 +451,32 @@ export default function RSSSection() {
                           {item.item_url}
                         </a>
                       )}
-                      {item.post_id && (
-                        <a href={`/admin/artigos`} className="text-xs text-green-600 hover:underline">
-                          → Artigo #{item.post_id}
+                      {item.post_id && item.status === 'done' && (
+                        <a href={`/admin/artigos/${item.post_id}/editar`} className="inline-flex items-center gap-1 text-xs text-green-600 hover:text-green-700 font-medium hover:underline">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          Editar artigo #{item.post_id}
                         </a>
+                      )}
+                      {(item.status === 'queued' || item.status === 'error') && (
+                        <button
+                          onClick={() => handleProcessItem(item)}
+                          disabled={processingItem === item.id}
+                          className="flex items-center gap-1.5 text-xs px-2.5 py-1 bg-brand-primary hover:bg-blue-700 text-white rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {processingItem === item.id ? (
+                            <>
+                              <svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                              </svg>
+                              Gerando...
+                            </>
+                          ) : (
+                            <>✨ Gerar agora</>
+                          )}
+                        </button>
                       )}
                       {item.error && (
                         <p className="text-xs text-red-600 bg-red-50 rounded px-1.5 py-0.5">{item.error.slice(0, 100)}</p>
