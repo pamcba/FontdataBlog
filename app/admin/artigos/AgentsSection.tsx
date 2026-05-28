@@ -66,7 +66,7 @@ export default function AgentsSection() {
   const [toast, setToast] = useState<Toast | null>(null)
   const [firecrawlConfigured, setFirecrawlConfigured] = useState(false)
   const [pexelsConfigured, setPexelsConfigured] = useState(false)
-  const [agentsExtra, setAgentsExtra] = useState<Record<string, { use_firecrawl?: boolean; image_source?: 'ai' | 'pexels' }>>({})
+  const [agentsExtra, setAgentsExtra] = useState<Record<string, { use_firecrawl?: boolean; image_source?: 'ai' | 'pexels'; reviewer_enabled?: boolean }>>({})
   const [savingExtra, setSavingExtra] = useState<AgentId | null>(null)
 
   // Pipeline runner state
@@ -99,7 +99,7 @@ export default function AgentsSection() {
 
     fetch('/api/admin/agents/extra')
       .then((r) => r.json())
-      .then((data: { firecrawl_configured?: boolean; pexels_configured?: boolean; agents_extra?: Record<string, { use_firecrawl?: boolean; image_source?: 'ai' | 'pexels' }> }) => {
+      .then((data: { firecrawl_configured?: boolean; pexels_configured?: boolean; agents_extra?: Record<string, { use_firecrawl?: boolean; image_source?: 'ai' | 'pexels'; reviewer_enabled?: boolean }> }) => {
         setFirecrawlConfigured(data.firecrawl_configured ?? false)
         setPexelsConfigured(data.pexels_configured ?? false)
         setAgentsExtra(data.agents_extra ?? {})
