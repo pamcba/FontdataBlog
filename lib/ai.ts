@@ -211,6 +211,19 @@ export async function aiChat(
   return response.choices[0]?.message?.content ?? ''
 }
 
+// Models whose output is image-only (no text output modality).
+// These require modalities: ['image'] — sending 'text' causes a 404.
+function isImageOnlyModel(modelId: string): boolean {
+  const imageOnlyPrefixes = [
+    'recraft/',
+    'black-forest-labs/',
+    'sourceful/',
+    'bytedance-seed/',
+    'x-ai/grok-imagine',
+  ]
+  return imageOnlyPrefixes.some((prefix) => modelId.startsWith(prefix))
+}
+
 export async function callOpenRouterImage(
   prompt: string,
   model?: string,
@@ -223,6 +236,7 @@ export async function callOpenRouterImage(
   }
 
   const resolvedModel = model ?? (await getAIModelFromDB('image_generation'))
+  const modalities = isImageOnlyModel(resolvedModel) ? ['image'] : ['text', 'image']
 
   const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
@@ -235,7 +249,7 @@ export async function callOpenRouterImage(
     },
     body: JSON.stringify({
       model: resolvedModel,
-      modalities: ['text', 'image'],
+      modalities,
       max_tokens: 4096,
       messages: [
         { role: 'user', content: prompt },
