@@ -96,6 +96,7 @@ export interface AgentContext {
   themeDescription?: string | null
   briefing?: string
   headline?: string
+  pastedText?: string
   researchLinks?: string[]
   sourceSummaries?: { url: string; summary: string }[]
   articleTitle?: string
