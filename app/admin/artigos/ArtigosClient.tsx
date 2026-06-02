@@ -7,11 +7,12 @@ import { Button } from '@/components/ui/Button'
 import NewArticleModal from './NewArticleModal'
 import AgentsSection from './AgentsSection'
 import RSSSection from './RSSSection'
+import FontesClient from '../fontes/FontesClient'
 import type { Post, Category, Tag } from '@/drizzle/schema'
 import type { ArticleGenerationConfig, ArticleVoiceTone, ArticleLanguage } from '@/lib/article-config-types'
 import { ARTICLE_CONFIG_DEFAULTS } from '@/lib/article-config-types'
 
-type SectionId = 'lista' | 'temas' | 'briefing' | 'automacao' | 'rss' | 'agentes' | 'categorias' | 'tags' | 'configuracao'
+type SectionId = 'lista' | 'temas' | 'briefing' | 'automacao' | 'rss' | 'fontes' | 'agentes' | 'categorias' | 'tags' | 'configuracao'
 
 const SIDEBAR_ITEMS: { id: SectionId; label: string; icon: string }[] = [
   { id: 'lista', label: 'Lista de Artigos', icon: '📝' },
@@ -19,6 +20,7 @@ const SIDEBAR_ITEMS: { id: SectionId; label: string; icon: string }[] = [
   { id: 'briefing', label: 'Briefing', icon: '📋' },
   { id: 'automacao', label: 'Automação', icon: '🤖' },
   { id: 'rss', label: 'RSS', icon: '📡' },
+  { id: 'fontes', label: 'Fontes de Conteúdo', icon: '🔍' },
   { id: 'agentes', label: 'Agentes de IA', icon: '🧠' },
   { id: 'categorias', label: 'Categorias', icon: '🗂️' },
   { id: 'tags', label: 'Tags', icon: '🏷️' },
@@ -40,6 +42,8 @@ export default function ArtigosClient() {
         return <AutomacaoSection />
       case 'rss':
         return <RSSSection />
+      case 'fontes':
+        return <FontesClient />
       case 'agentes':
         return <AgentsSection />
       case 'categorias':
