@@ -66,9 +66,15 @@ const EMPTY_FORM = {
 }
 
 const URL_HINTS: Record<CrawlerType, string> = {
-  github: 'Termo de busca no GitHub (ex: "AI tools machine learning")',
+  github: 'Termos de busca em inglês (ex: "claude code AI skills tools")',
   docs: 'URL base da documentação (ex: https://docs.anthropic.com)',
   custom: 'URL específica para raspar (ex: https://example.com/page)',
+}
+
+const URL_LABELS: Record<CrawlerType, string> = {
+  github: 'Termos de busca (em inglês)',
+  docs: 'URL base',
+  custom: 'URL',
 }
 
 function formatDate(d: string | null) {
@@ -390,9 +396,7 @@ export default function FontesClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  {form.type === 'github' ? 'Termo de busca' : 'URL'}
-                </label>
+                <label className="block text-xs font-medium text-gray-700 mb-1">{URL_LABELS[form.type]}</label>
                 <input
                   className="w-full rounded-lg px-3 py-2 text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-primary"
                   value={form.url}
