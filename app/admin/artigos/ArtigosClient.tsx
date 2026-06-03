@@ -15,6 +15,14 @@ import { ARTICLE_CONFIG_DEFAULTS } from '@/lib/article-config-types'
 
 type SectionId = 'lista' | 'temas' | 'briefing' | 'automacao' | 'rss' | 'fontes' | 'agentes' | 'categorias' | 'tags' | 'configuracao'
 
+function formatDateTime(d: Date | string | null) {
+  if (!d) return '—'
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  }).format(new Date(d))
+}
+
 const SIDEBAR_ITEMS: { id: SectionId; label: string; icon: string }[] = [
   { id: 'lista', label: 'Lista de Artigos', icon: '📝' },
   { id: 'temas', label: 'Temas', icon: '💡' },
@@ -184,10 +192,6 @@ function ListaArtigos() {
     }
   }
 
-  function formatDate(d: Date | null) {
-    if (!d) return '—'
-    return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(d))
-  }
 
   return (
     <>
@@ -237,7 +241,7 @@ function ListaArtigos() {
                       {{ draft: 'Rascunho', published: 'Publicado' }[post.status]}
                     </Badge>
                   </td>
-                  <td className="px-4 py-3 text-gray-500">{formatDate(post.created_at)}</td>
+                  <td className="px-4 py-3 text-gray-500">{formatDateTime(post.published_at)}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-3 justify-end items-center">
                       <Link href={`/admin/artigos/${post.id}/editar`} title="Editar" className="text-brand-primary hover:text-brand-primary/70">
@@ -860,14 +864,6 @@ function AutomacaoSection() {
     setSelectedThemeIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     )
-  }
-
-  function formatDateTime(d: string | null) {
-    if (!d) return '—'
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit', month: '2-digit', year: 'numeric',
-      hour: '2-digit', minute: '2-digit',
-    }).format(new Date(d))
   }
 
   function formatDuration(ms: number | null) {
