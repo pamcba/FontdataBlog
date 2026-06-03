@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import type { NewsletterConfig } from '@/lib/settings'
 
@@ -14,12 +14,32 @@ interface Subscriber {
 
 interface Props {
   initialConfig: NewsletterConfig
-  initialSubscribers: Subscriber[]
 }
 
-export function NewsletterClient({ initialConfig, initialSubscribers }: Props) {
+export function NewsletterClient({ initialConfig }: Props) {
   const [config, setConfig] = useState<NewsletterConfig>(initialConfig)
-  const [subscribers, setSubscribers] = useState<Subscriber[]>(initialSubscribers)
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([])
+  const [loadingSubscribers, setLoadingSubscribers] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/admin/newsletter')
+      .then((r) => r.json())
+      .then((data) => {
+        setSubscribers(
+          (data.subscribers ?? []).map((s: Subscriber & { subscribed_at: string | Date; unsubscribed_at: string | Date | null }) => ({
+            ...s,
+            subscribed_at: typeof s.subscribed_at === 'string' ? s.subscribed_at : new Date(s.subscribed_at).toISOString(),
+            unsubscribed_at: s.unsubscribed_at
+              ? typeof s.unsubscribed_at === 'string'
+                ? s.unsubscribed_at
+                : new Date(s.unsubscribed_at).toISOString()
+              : null,
+          }))
+        )
+      })
+      .catch(() => {})
+      .finally(() => setLoadingSubscribers(false))
+  }, [])
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
   const [unsubscribing, setUnsubscribing] = useState<number | null>(null)
@@ -150,7 +170,13 @@ export function NewsletterClient({ initialConfig, initialSubscribers }: Props) {
         <section className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-neutral-900 mb-5">Inscritos</h2>
 
-          {subscribers.length === 0 ? (
+          {loadingSubscribers ? (
+            <div className="space-y-2 animate-pulse">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-10 bg-gray-100 rounded" />
+              ))}
+            </div>
+          ) : subscribers.length === 0 ? (
             <p className="text-sm text-gray-500">Nenhum inscrito ainda.</p>
           ) : (
             <div className="overflow-x-auto">

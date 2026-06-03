@@ -109,6 +109,8 @@ export function ConfiguracoesClient({ initial, initialAI, initialTelegram, initi
     completion_tokens: number
     total_tokens: number
     cost_usd: number
+    cost_brl: number | null
+    usd_brl_rate: number | null
     status: string
     error: string | null
     duration_ms: number | null
@@ -120,12 +122,13 @@ export function ConfiguracoesClient({ initial, initialAI, initialTelegram, initi
       total_requests: number
       total_tokens: number
       total_cost_usd: number
+      total_cost_brl: number | null
       success_count: number
       error_count: number
       avg_duration_ms: number
     }
-    by_feature: { feature: string; request_count: number; total_tokens: number; total_cost_usd: number }[]
-    by_model: { model: string; request_count: number; total_tokens: number; total_cost_usd: number }[]
+    by_feature: { feature: string; request_count: number; total_tokens: number; total_cost_usd: number; total_cost_brl: number | null }[]
+    by_model: { model: string; request_count: number; total_tokens: number; total_cost_usd: number; total_cost_brl: number | null }[]
   }
   const [aiLogs, setAiLogs] = useState<AiLogEntry[]>([])
   const [aiLogsTotal, setAiLogsTotal] = useState(0)
@@ -575,10 +578,21 @@ export function ConfiguracoesClient({ initial, initialAI, initialTelegram, initi
                   </div>
                   <div className="bg-gray-50 rounded-lg p-4">
                     <p className="text-xs text-gray-500 mb-1">Custo Estimado</p>
-                    <p className="text-2xl font-bold text-neutral-900">
-                      ${aiStats.totals.total_cost_usd.toFixed(4)}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">USD</p>
+                    {aiStats.totals.total_cost_brl != null ? (
+                      <>
+                        <p className="text-2xl font-bold text-neutral-900">
+                          R$ {aiStats.totals.total_cost_brl.toFixed(4)}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">${aiStats.totals.total_cost_usd.toFixed(4)} USD</p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-2xl font-bold text-neutral-900">
+                          ${aiStats.totals.total_cost_usd.toFixed(4)}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">USD</p>
+                      </>
+                    )}
                   </div>
                   <div className="bg-gray-50 rounded-lg p-4">
                     <p className="text-xs text-gray-500 mb-1">Tempo Médio</p>
@@ -617,7 +631,13 @@ export function ConfiguracoesClient({ initial, initialAI, initialTelegram, initi
                           <span className="text-gray-700 truncate font-mono text-xs">{row.model}</span>
                           <div className="flex items-center gap-3 shrink-0">
                             <span className="text-gray-500 text-xs">{row.request_count}x</span>
-                            <span className="text-gray-400 text-xs">${row.total_cost_usd.toFixed(4)}</span>
+                            {row.total_cost_brl != null ? (
+                              <span className="text-gray-400 text-xs" title={`$${row.total_cost_usd.toFixed(4)} USD`}>
+                                R$ {row.total_cost_brl.toFixed(4)}
+                              </span>
+                            ) : (
+                              <span className="text-gray-400 text-xs">${row.total_cost_usd.toFixed(4)}</span>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -666,7 +686,13 @@ export function ConfiguracoesClient({ initial, initialAI, initialTelegram, initi
                             <td className="py-2 pr-3 text-gray-500 font-mono max-w-[140px] truncate">{log.model}</td>
                             <td className="py-2 pr-3 text-right text-gray-700 tabular-nums">{log.total_tokens.toLocaleString('pt-BR')}</td>
                             <td className="py-2 pr-3 text-right text-gray-700 tabular-nums">
-                              {log.cost_usd > 0 ? `$${log.cost_usd.toFixed(5)}` : '—'}
+                              {log.cost_brl != null ? (
+                                <span title={`$${log.cost_usd.toFixed(5)} USD`}>
+                                  R$ {log.cost_brl.toFixed(5)}
+                                </span>
+                              ) : log.cost_usd > 0 ? (
+                                `$${log.cost_usd.toFixed(5)}`
+                              ) : '—'}
                             </td>
                             <td className="py-2 pr-3 text-right text-gray-500 tabular-nums">
                               {log.duration_ms != null ? `${(log.duration_ms / 1000).toFixed(1)}s` : '—'}

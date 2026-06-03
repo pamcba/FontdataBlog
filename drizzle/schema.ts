@@ -319,6 +319,8 @@ export const aiRequestLogs = pgTable(
     completion_tokens: integer('completion_tokens').notNull().default(0),
     total_tokens: integer('total_tokens').notNull().default(0),
     cost_usd: real('cost_usd').notNull().default(0),
+    cost_brl: real('cost_brl'),
+    usd_brl_rate: real('usd_brl_rate'),
     status: text('status').notNull().default('success'), // 'success' | 'error'
     error: text('error'),
     duration_ms: integer('duration_ms'),

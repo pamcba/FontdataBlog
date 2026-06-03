@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
         total_requests: sql<number>`count(*)::int`,
         total_tokens: sql<number>`coalesce(sum(${aiRequestLogs.total_tokens}), 0)::int`,
         total_cost_usd: sql<number>`coalesce(sum(${aiRequestLogs.cost_usd}), 0)`,
+        total_cost_brl: sql<number | null>`sum(${aiRequestLogs.cost_brl})`,
         success_count: sql<number>`count(*) filter (where ${aiRequestLogs.status} = 'success')::int`,
         error_count: sql<number>`count(*) filter (where ${aiRequestLogs.status} = 'error')::int`,
         avg_duration_ms: sql<number>`coalesce(avg(${aiRequestLogs.duration_ms}), 0)`,
@@ -58,6 +59,7 @@ export async function GET(req: NextRequest) {
         request_count: sql<number>`count(*)::int`,
         total_tokens: sql<number>`coalesce(sum(${aiRequestLogs.total_tokens}), 0)::int`,
         total_cost_usd: sql<number>`coalesce(sum(${aiRequestLogs.cost_usd}), 0)`,
+        total_cost_brl: sql<number | null>`sum(${aiRequestLogs.cost_brl})`,
       })
       .from(aiRequestLogs)
       .where(whereClause)
@@ -71,6 +73,7 @@ export async function GET(req: NextRequest) {
         request_count: sql<number>`count(*)::int`,
         total_tokens: sql<number>`coalesce(sum(${aiRequestLogs.total_tokens}), 0)::int`,
         total_cost_usd: sql<number>`coalesce(sum(${aiRequestLogs.cost_usd}), 0)`,
+        total_cost_brl: sql<number | null>`sum(${aiRequestLogs.cost_brl})`,
       })
       .from(aiRequestLogs)
       .where(whereClause)

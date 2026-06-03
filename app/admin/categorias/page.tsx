@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
-import type { Category } from '@/drizzle/schema'
+import type { Category } from '@/lib/admin-types'
 
 export default function CategoriasPage() {
   const [categories, setCategories] = useState<Category[]>([])

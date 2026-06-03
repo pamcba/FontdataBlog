@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, KeyboardEvent } from 'react'
-import type { Tag } from '@/drizzle/schema'
+import type { Tag } from '@/lib/admin-types'
 
 export default function TagsPage() {
   const [tags, setTags] = useState<Tag[]>([])

@@ -101,7 +101,13 @@ async function persistAiLog(entry: {
   try {
     const { db } = await import('@/drizzle/db')
     const { aiRequestLogs } = await import('@/drizzle/schema')
-    await db.insert(aiRequestLogs).values(entry)
+    const { getUsdBrlRate } = await import('@/lib/exchange-rate')
+    const rate = entry.cost_usd > 0 ? await getUsdBrlRate() : null
+    await db.insert(aiRequestLogs).values({
+      ...entry,
+      usd_brl_rate: rate ?? undefined,
+      cost_brl: rate != null ? entry.cost_usd * rate : undefined,
+    })
   } catch {
     // fire-and-forget — nunca bloqueia a chamada principal
   }

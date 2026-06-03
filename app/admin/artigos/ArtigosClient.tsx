@@ -9,7 +9,7 @@ import AgentsSection from './AgentsSection'
 import RSSSection from './RSSSection'
 import FontesClient from '../fontes/FontesClient'
 import LogsSection from './LogsSection'
-import type { Post, Category, Tag } from '@/drizzle/schema'
+import type { Post, Category, Tag } from '@/lib/admin-types'
 import type { ArticleGenerationConfig, ArticleVoiceTone, ArticleLanguage } from '@/lib/article-config-types'
 import { ARTICLE_CONFIG_DEFAULTS } from '@/lib/article-config-types'
 
